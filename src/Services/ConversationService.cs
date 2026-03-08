@@ -1,18 +1,19 @@
 using System.Collections.Concurrent;
 using Microsoft.Extensions.Options;
 using PhysicianAssistant.Configuration;
+using PhysicianAssistant.Models;
 
 namespace PhysicianAssistant.Services;
 
-public class ConversationService : IConversationService
+public class InMemoryConversationService : IConversationService
 {
     private readonly ConcurrentDictionary<string, ConversationHistory> _conversations = new();
     private readonly ConversationSettings _settings;
-    private readonly ILogger<ConversationService> _logger;
+    private readonly ILogger<InMemoryConversationService> _logger;
 
-    public ConversationService(
+    public InMemoryConversationService(
         IOptions<ConversationSettings> settings,
-        ILogger<ConversationService> logger)
+        ILogger<InMemoryConversationService> logger)
     {
         _settings = settings.Value;
         _logger = logger;
@@ -76,12 +77,4 @@ public class ConversationService : IConversationService
 
         return history.LastActivity.AddMinutes(_settings.SessionTimeoutMinutes) >= DateTime.UtcNow;
     }
-
-    private class ConversationHistory
-    {
-        public List<ConversationMessage> Messages { get; } = new();
-        public DateTime LastActivity { get; set; } = DateTime.UtcNow;
-    }
-
-    private record ConversationMessage(string Role, string Content, DateTime Timestamp);
 }

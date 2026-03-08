@@ -43,7 +43,7 @@ builder.Services.AddHttpClient<IPubMedService, PubMedService>()
         .WaitAndRetryAsync(2, _ => TimeSpan.FromMilliseconds(500)));
 
 // Register services
-builder.Services.AddSingleton<IConversationService, ConversationService>();
+builder.Services.AddSingleton<IConversationService, FileConversationService>();
 builder.Services.AddScoped<ITriageService, TriageService>();
 
 var app = builder.Build();

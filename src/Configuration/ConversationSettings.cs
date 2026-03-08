@@ -6,4 +6,5 @@ public class ConversationSettings
 
     public int MaxHistoryPerUser { get; set; } = 10;
     public int SessionTimeoutMinutes { get; set; } = 30;
+    public string StoragePath { get; set; } = "conversations";
 }
