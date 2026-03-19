@@ -458,11 +458,13 @@
 
 ### L-E. Insurance & Business Protection
 
+> **Current state:** Learned Geek LLC provides liability protection as a corporate entity. There is no explicit E&O, professional liability, or cyber liability insurance policy in place. The tasks below are about evaluating whether this engagement changes that calculus.
+
 | # | Task | Est. | Owner | Notes |
 |---|---|---|---|---|
-| L.36 | Errors & Omissions (E&O) insurance — does current policy cover AI/medical? | Md | Mark | Call your agent. Standard tech E&O may exclude medical AI. |
-| L.37 | Professional liability insurance — separate policy needed? | Md | Mark + Agent | If E&O doesn't cover clinical decision support, you may need specific coverage |
-| L.38 | Cyber liability insurance — data breach coverage | Sm | Mark | Pediatric health data breach = significant exposure |
+| L.36 | Evaluate need for E&O insurance — AI/medical context | Md | Mark | Get quotes. Understand what a policy would and wouldn't cover for this project. |
+| L.37 | Evaluate need for professional liability insurance | Md | Mark | Clinical decision support tools may create exposure beyond what the LLC shields. |
+| L.38 | Evaluate need for cyber liability insurance | Sm | Mark | Pediatric health data breach = significant exposure. What would a policy cost? |
 | L.39 | International coverage — does policy cover claims originating from Peru? | Sm | Mark + Agent | US policy may not cover foreign jurisdiction claims |
 | L.40 | Contract value vs. liability exposure assessment | Sm | Mark | $32K–$41K contract value vs. potentially uncapped liability. Engagement letter cap is essential. |
 

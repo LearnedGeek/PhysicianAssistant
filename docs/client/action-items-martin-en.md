@@ -59,15 +59,9 @@ What is your target for having the first system operational? Are there any exter
 
 These are items we'll work through together during Discovery, but thinking about them now will make the call more productive.
 
-### 2.1 — Critical Lab Value Thresholds
+### 2.1 — Critical Lab Value Thresholds (Future — Not Urgent)
 
-The system needs to detect critical lab results and trigger the emergency pathway. You mentioned this in your response to Q6. We need specific numeric thresholds for the pediatric values you consider critical — for example:
-
-- Hemoglobin: below what value is critical for a child of age X?
-- Glucose: what range triggers emergency?
-- Any other lab values you want the system to flag?
-
-**What I need from you:** A list of lab values with critical thresholds, ideally by age group. This can be a simple table — it doesn't need to be formal. We'll build the detection logic from your clinical expertise.
+At some point during the build, we'll need specific numeric thresholds for pediatric lab values that should trigger the emergency pathway — the kind of thing you referenced in your response to Q6 (hemoglobin, glucose, etc. by age group). We'll scaffold the system to support this, but we don't need the actual numbers yet. Just something to start thinking about when you have time — we'll work through it together when we get to that part of the build.
 
 ### 2.2 — VoBo Sampling Rate
 
@@ -107,9 +101,9 @@ We're reviewing the acceptable use policies of Anthropic (the AI provider) and M
 
 We'll execute Data Processing Agreements (DPAs) with Twilio and Anthropic before any production deployment. Your legal counsel may want copies of these for their compliance review.
 
-### 3.3 — Insurance Review
+### 3.3 — Business Structure
 
-We're reviewing our professional liability and E&O insurance coverage to ensure it extends to AI-assisted medical systems and international clients. We'll share relevant certificates if your counsel requests them.
+Learned Geek LLC is a US-based limited liability company. We're evaluating whether the scope of this engagement warrants additional professional liability coverage specific to AI-assisted medical systems.
 
 ### 3.4 — WhatsApp Business Approval
 

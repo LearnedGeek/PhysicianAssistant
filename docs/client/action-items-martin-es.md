@@ -59,15 +59,9 @@ Aún no hemos hablado de presupuesto, y quiero prepararte una propuesta que teng
 
 Estos son puntos que trabajaremos juntos durante Discovery, pero pensar en ellos ahora hará la llamada más productiva.
 
-### 2.1 — Umbrales Críticos de Valores de Laboratorio
+### 2.1 — Umbrales Críticos de Valores de Laboratorio (Futuro — No Urgente)
 
-El sistema necesita detectar resultados de laboratorio críticos y activar la vía de emergencia. Mencionaste esto en tu respuesta a la P6. Necesitamos umbrales numéricos específicos para los valores pediátricos que consideras críticos — por ejemplo:
-
-- Hemoglobina: ¿por debajo de qué valor es crítico para un niño de edad X?
-- Glucosa: ¿qué rango activa emergencia?
-- ¿Otros valores de laboratorio que quieras que el sistema señale?
-
-**Lo que necesito de ti:** Una lista de valores de laboratorio con umbrales críticos, idealmente por grupo de edad. Puede ser una tabla simple — no necesita ser formal. Construiremos la lógica de detección a partir de tu experiencia clínica.
+En algún momento durante la construcción, vamos a necesitar umbrales numéricos específicos para valores pediátricos que deberían activar la vía de emergencia — como lo que mencionaste en tu respuesta a la P6 (hemoglobina, glucosa, etc. por grupo de edad). Vamos a preparar el sistema para soportar esto, pero no necesitamos los números todavía. Solo es algo para que lo vayas pensando cuando tengas tiempo — lo trabajamos juntos cuando lleguemos a esa parte.
 
 ### 2.2 — Tasa de Muestreo VoBo
 
@@ -107,9 +101,9 @@ Estamos revisando las políticas de uso aceptable de Anthropic (el proveedor de 
 
 Ejecutaremos Acuerdos de Procesamiento de Datos (DPAs) con Twilio y Anthropic antes de cualquier implementación en producción. Tu asesor legal puede querer copias de estos para su revisión de cumplimiento.
 
-### 3.3 — Revisión de Seguros
+### 3.3 — Estructura Empresarial
 
-Estamos revisando nuestra cobertura de seguro de responsabilidad profesional y E&O para asegurar que se extienda a sistemas médicos asistidos por IA y clientes internacionales. Compartiremos certificados relevantes si tu asesor lo solicita.
+Learned Geek LLC es una empresa de responsabilidad limitada con sede en EE.UU. Estamos evaluando si el alcance de este proyecto amerita cobertura adicional de responsabilidad profesional específica para sistemas médicos asistidos por IA.
 
 ### 3.4 — Aprobación de WhatsApp Business
 
