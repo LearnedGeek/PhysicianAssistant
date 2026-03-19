@@ -18,6 +18,9 @@ appsettings.*.local.json
 ## Data
 conversations/
 
+## Intern (contains PII — resumes, contact info)
+docs/intern/
+
 ## OS
 Thumbs.db
 .DS_Store

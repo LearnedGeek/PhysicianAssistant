@@ -152,8 +152,8 @@ Parent (WhatsApp)
 Twilio WhatsApp
       │
       ▼
-Learned Geek Webhook Backend (Node.js / Express)
-      ├── Session manager (Redis — per-number conversation state)
+Learned Geek Webhook Backend (C# / ASP.NET Core)
+      ├── Session manager (PostgreSQL-backed — per-number conversation state)
       ├── STT transcription (incoming voice → text)
       ├── Image router:
       │     ├── Category A (radiology) → store + forward, flag for future
@@ -175,7 +175,7 @@ Learned Geek Webhook Backend (Node.js / Express)
             └── VoBo audit log (mandatory urgent; sampled routine)
                   │
                   ▼
-      Physician Dashboard (Web)
+      Physician Dashboard (Blazor)
             ├── Prioritized queue (EMG → urgent → routine)
             ├── Full transcript + image viewer + lab values
             ├── Impresión Dx. (AI clinical impression — validated/overridden)
@@ -334,11 +334,11 @@ physicians (
 
 | # | Question |
 |---|---|
-| T001 | Does Twilio WhatsApp sandbox behave consistently for testing? |
-| T002 | What is PubMed ESearch + EFetch combined latency mid-conversation? |
+| T001 | ~~Does Twilio WhatsApp sandbox behave consistently for testing?~~ **Answered — Yes, POC validated.** |
+| T002 | ~~What is PubMed ESearch + EFetch combined latency mid-conversation?~~ **Answered — acceptable; POC validated.** |
 | T003 | Which vision model gives best results for dermatology/trauma photos at acceptable cost? |
 | T004 | Can Claude reliably parse lab result images and extract numeric values? |
-| T005 | Redis for session management or PostgreSQL-backed sessions? |
+| T005 | ~~Redis for session management or PostgreSQL-backed sessions?~~ **Decision: PostgreSQL-backed. Stack is C#/.NET — Redis adds unnecessary infrastructure.** |
 
 ---
 
@@ -431,11 +431,13 @@ This is a shared responsibility. We build the safeguards; Martin validates that 
 
 ## Phasing Plan — Updated
 
-### Phase 0 — POC (Internal, 1–2 weeks, not billable)
-- Twilio → Claude API → PubMed RAG → structured JSON output
+### Phase 0 — POC (Internal, 1–2 weeks, not billable) ✓ COMPLETE
+- ✅ Twilio → Claude API → PubMed RAG → structured JSON output — validated
+- ✅ Bilingual (Spanish/English) triage conversation — validated
+- ✅ File-backed conversation persistence per phone number — validated
+- ✅ PubMed latency acceptable mid-conversation — validated
 - Add: vision model test with sample Category B photo
 - Add: lab value parsing test with sample numeric result
-- Answer: vision accuracy, lab parsing reliability, PubMed latency
 
 ### Phase 1 — Discovery & Specification (2–3 weeks, billable)
 - Resolve D001–D011
@@ -448,14 +450,14 @@ This is a shared responsibility. We build the safeguards; Martin validates that 
 ### Phase 2 — Infanzia Product Chatbot (4–6 weeks)
 - WhatsApp AI assistant for product line
 - Knowledge base: all Infanzia products
-- Admin interface: document upload, conversation log, on/off toggle
+- Admin interface (Blazor): document upload, conversation log, on/off toggle
 
 ### Phase 3 — Physician System Backend (7–9 weeks)
 - Twilio + Claude API + PubMed RAG pipeline
 - Image routing: Category A store/forward; Category B vision + disclaimer; Category C lab parser
 - Critical result emergency detection
 - Longitudinal patient data warehouse (PostgreSQL)
-- Session management (Redis)
+- Session management (PostgreSQL-backed)
 - VoBo audit log with mandatory/sampling logic
 - Clinical impression generation
 
@@ -515,10 +517,10 @@ Martin's Q4 response reveals he is already thinking about this as a platform: B2
 ## Immediate Next Steps
 
 - [x] Receive and analyze Martin's written Q&A responses ✓
+- [x] Build POC (Phase 0) — core pipeline validated (Twilio + Claude + PubMed RAG + bilingual + persistence) ✓
 - [ ] Send Martin two meeting time options for Discovery call
 - [ ] Register free NCBI API key: ncbi.nlm.nih.gov/account (2 min)
-- [ ] Update POC spec to include Category B vision model test + lab value parsing
-- [ ] Build POC (Phase 0) — validate core pipeline before Discovery call
+- [ ] Update POC to include Category B vision model test + lab value parsing
 - [ ] Engage Peruvian legal contact — scope now broader (longitudinal + B2C potential)
 - [ ] Prepare tiered scope options in case budget conversation is needed
 - [ ] Execute engagement letter before any Phase 1 billable work begins
