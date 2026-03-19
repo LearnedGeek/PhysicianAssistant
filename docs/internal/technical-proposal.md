@@ -516,15 +516,59 @@ Martin's Q4 response reveals he is already thinking about this as a platform: B2
 
 ## Immediate Next Steps
 
+### Completed
 - [x] Receive and analyze Martin's written Q&A responses ✓
 - [x] Build POC (Phase 0) — core pipeline validated (Twilio + Claude + PubMed RAG + bilingual + persistence) ✓
-- [ ] Send Martin two meeting time options for Discovery call
+- [x] Comprehensive task breakdown — ~271 tasks across 16 milestones (see `docs/technical/TASK-BREAKDOWN.md`) ✓
+- [x] Legal & compliance gap analysis — 58 legal tasks identified including medical device classification risk ✓
+
+### Send to Martin (Priority — drives everything else)
+- [ ] Send Martin pre-Discovery action items document (see `docs/client/action-items-martin-en.md` / `-es.md`)
+- [ ] Explicitly ask Martin for Peruvian legal counsel recommendation (Ley 29733 + health data)
+- [ ] Ask Martin to check DIGEMID medical device classification risk with counsel
+- [ ] Ask Martin to review franchise agreement for AI deployment restrictions
+- [ ] Request budget range and timeline expectations
+- [ ] Request Martin suggest 2–3 times for Discovery call
+
+### Learned Geek Actions (Parallel — don't wait for Martin)
 - [ ] Register free NCBI API key: ncbi.nlm.nih.gov/account (2 min)
+- [ ] Review Anthropic Acceptable Use Policy for medical/clinical restrictions
+- [ ] Review Meta/WhatsApp Business Policy for health data messaging restrictions
+- [ ] Review Twilio policies for medical use
+- [ ] Call insurance agent — verify E&O coverage for AI/medical + international claims
+- [ ] Prepare tiered scope options (full vs lean MVP) for budget conversation
 - [ ] Update POC to include Category B vision model test + lab value parsing
-- [ ] Engage Peruvian legal contact — scope now broader (longitudinal + B2C potential)
-- [ ] Prepare tiered scope options in case budget conversation is needed
-- [ ] Execute engagement letter before any Phase 1 billable work begins
-- [ ] Begin WhatsApp Business API application at Phase 1 kickoff
+- [ ] Draft engagement letter template (scope, IP ownership, liability cap, indemnification)
+- [ ] Begin WhatsApp Business API application (1–4 week lead time)
+- [ ] Set up GitHub Project board — milestones, labels, custom fields
+- [ ] Backfill internal docs — phasing plan now includes admin portal, legal, security, deployment
+
+### Blockers (Cannot proceed past Discovery without these)
+- [ ] Peruvian legal counsel engaged and reviewing Ley 29733 compliance
+- [ ] DIGEMID medical device classification — answer received (project-viability question)
+- [ ] Telemedicine law (Ley 30421) applicability — answer received
+- [ ] Budget alignment with Martin
+- [ ] Engagement letter signed
+
+---
+
+## Updated Phasing (reflects full task breakdown)
+
+The original phasing underestimated operational overhead. The complete task breakdown (see `docs/technical/TASK-BREAKDOWN.md`) reveals the true scope:
+
+| Phase | Original Estimate | Revised Estimate | Delta |
+|---|---|---|---|
+| Build (Phases 1–6) | $32.5K–$41.5K | Similar | Build cost hasn't changed much |
+| Legal & Compliance | Not estimated | 120–180 hrs | Was invisible; now explicit |
+| Admin Portal | Not scoped | 80–120 hrs | Audit trail, monitoring, compliance tools |
+| Testing (full) | Not estimated | 50–75 hrs | Automated + UAT with Martin |
+| Documentation | Not estimated | 30–45 hrs | README, API docs, runbooks, client guide |
+| Deployment & DevOps | Not estimated | 45–65 hrs | Environments, CI/CD, go-live |
+| **Total project** | **315–460 hrs** | **740–1,060 hrs** | **~2x when operational overhead is honest** |
+
+**Key insight:** The build is ~50% of the real effort. Legal, compliance, testing, documentation, deployment, and the admin portal are the other ~50%. This is normal for regulated, international, medical-adjacent systems — but it must be reflected in pricing and timeline if we're honest with ourselves and the client.
+
+**Pricing implication:** The current pricing framework ($32.5K–$41.5K) covers the build. It does not cover legal counsel, insurance, compliance tooling, or the full admin portal. Either these are absorbed as business cost (investment in a productizable platform) or they're scoped into the engagement. Decision needed before Discovery call.
 
 ---
 
