@@ -62,3 +62,17 @@ Sent pre-Discovery action items document covering legal, regulatory, operational
 - Attachment filed and summarized in [docs/client/proposals/2026-03-22/260323-DrNunez-legal-responses-EN.md](proposals/2026-03-22/260323-DrNunez-legal-responses-EN.md)
 
 ---
+
+## 2026-03-23 — WhatsApp — Carlos Rojas Confirmed Active
+
+**Channel:** WhatsApp
+**From:** Martín
+
+> Hola Mark. Si, conversé con Carlos y estará revisando todo. Yo le doy seguimiento. Saludos.
+
+**Key takeaways:**
+- Carlos Rojas confirmed actively working — not just filed
+- Martin is personally following up with him
+- No timeline given — hold on pushing for Discovery call until Carlos's responses arrive
+
+---

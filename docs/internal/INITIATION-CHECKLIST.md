@@ -86,8 +86,8 @@ Carlos Rojas received the action items document via Martin. But "received" is no
 
 | # | Item | Status | Notes |
 |---|---|---|---|
-| C001 | Nudge Martin to confirm Carlos is actively reviewing — not just filed | 🔴 Open | Polite: "¿Carlos ya pudo revisar el documento?" |
-| C002 | Confirm DIGEMID classification question is explicitly in front of Carlos | 🔴 Open | Most critical single legal question — viability depends on the answer |
+| C001 | ~~Nudge Martin to confirm Carlos is actively reviewing~~ | 🟢 Resolved | Martin confirmed 2026-03-23: "conversé con Carlos y estará revisando todo. Yo le doy seguimiento." |
+| C002 | Confirm DIGEMID classification question is explicitly in front of Carlos | 🟡 In Progress | Action items doc sent to Carlos directly; Martin following up |
 | C003 | Confirm Ley 30421 (telemedicine) question is explicitly in front of Carlos | 🔴 Open | May impose licensing requirements |
 | C004 | Set a soft deadline expectation with Martin for Carlos's responses | 🔴 Open | "Sin prisa" is fine for Martin; Carlos should have a timeline |
 | C005 | Establish whether Carlos will communicate directly with Mark or only through Martin | 🔴 Open | Direct line to Carlos would be cleaner for legal back-and-forth |
