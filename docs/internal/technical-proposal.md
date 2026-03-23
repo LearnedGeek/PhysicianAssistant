@@ -423,15 +423,28 @@ Confabulation risk is tiered by consequence. The mitigations are calibrated to t
 
 **Gate 1 — Evidence Gate (pre-physician)**
 
+**Architectural principle (validated by ANI Runtime production debugging, March 2026):**
+**Architecture over instruction.** Control what the model sees, not what it does with what it sees. Adding anti-confabulation instructions to the prompt consumes Claude's attention budget and competes with its trained honest-uncertainty behavior — producing robotic, parroting output rather than better reasoning. The fix is upstream: control what reaches the model.
+
+See: `docs/internal/ANI-Cross-Project-Insight-Confabulation.md`
+
 Operates in sequence before any clinical impression reaches the physician queue:
 
-1. **Retrieval confidence check** — PubMed results are scored for semantic relevance to the query. If all results fall below threshold, or nothing is retrieved, impression generation is skipped. Case is flagged: *"Insufficient clinical evidence — physician review required without AI impression."* A null impression is the correct output, not a failure.
+1. **Retrieval confidence floor — the most important gate.**
+PubMed results are scored for semantic relevance. Start conservative: threshold 0.65+. At lower thresholds, tangentially related abstracts pass and the model incorporates them regardless of warning instructions. When nothing passes the threshold, inject nothing — do not retrieve-then-warn. A null impression queued for physician review is always better than a confident fabrication. Lower the threshold only after retrieval quality is validated in production.
 
-2. **Citation enforcement** — Claude's impression output is structured JSON. Every factual claim requires a `source` field populated with a PMID from the retrieved set. Claims with empty `source` fields are stripped by the output parser. If the entire impression cannot be attributed, it is replaced with null. This is enforced by code, not instruction.
+2. **Schema-first null response — honesty as the default state.**
+The output schema is structured so that `evidence_sufficient: false` is the default. The model must actively justify `true` with citations. Do NOT instruct Claude to say "insufficient evidence" — it was trained to express honest uncertainty naturally. Instruction competes with trained behavior and produces rule-following robotic output instead. Let the schema enforce the behavior.
 
-3. **Low-temperature generation** — Clinical impression generation runs at temperature 0.2–0.3. Trades fluency for factual conservatism. The model says less and says it more carefully.
-
-4. **Post-generation attribution verification** — A secondary parse verifies every factual claim in the output maps to a retrieved abstract passage. Unattributable claims are stripped before the output is written to the database.
+```json
+{
+  "impresion_dx": null,
+  "sources": [],
+  "confidence": null,
+  "evidence_sufficient": false,
+  "retrieval_score": 0.41
+}
+```
 
 ```json
 {
@@ -443,13 +456,21 @@ Operates in sequence before any clinical impression reaches the physician queue:
 }
 ```
 
-If `evidence_sufficient` is false or `sources` is empty — the impression field is null in the physician queue.
+If `evidence_sufficient` is false or `sources` is empty — the impression field is null in the physician queue. No post-generation re-generation. The retrieval floor is the fix, not a downstream recovery step.
+
+3. **Low-temperature generation — empirically validated.**
+Temperature 0.2–0.3 for clinical impression generation. Validated by ANI Runtime production testing. Trades fluency for factual conservatism. Do not raise for clinical output.
+
+4. **Lean system prompt — fewer competing instructions.**
+The system prompt for clinical impression generation should be as short as possible. Every added instruction consumes attention budget. Claude's trained behavior handles honest uncertainty — do not re-instruct it. Add only what is architecturally necessary and not already in the output schema.
 
 **Gate 2 — Physician Gate (VoBo)**
 
 All cases that pass Gate 1 require physician review before any clinical decision. Urgent/emergency cases are locked until VoBo is completed. Routine cases are sampled. Physician override rate is tracked from day one — if overrides exceed ~15–20%, the system is not production-ready.
 
 **Physician-curated fallback layer** — query categories with consistently low retrieval scores or high override rates are identified and routed directly to physician review without AI impression, bypassing Gate 1 entirely.
+
+**Confabulation type tracking** — when a physician overrides an impression, record not just that an override occurred but why: Was the impression factually invented, or were real facts misattributed to the wrong source? These have different architectural causes. Also correlate overrides with retrieval score — if the physician overrides when retrieval_score was high, the problem is model reasoning; if overrides correlate with low retrieval_score, the confidence floor needs raising.
 
 ---
 
