@@ -3,7 +3,7 @@
 
 Prepared by: Learned Geek LLC
 Date: March 2026
-Version: 0.1 — Internal draft, pending Erika review before sharing with Martin
+Version: 0.2 — Internal draft, pending Erika review before sharing with Martin
 
 ---
 
@@ -17,18 +17,32 @@ Version: 0.1 — Internal draft, pending Erika review before sharing with Martin
 ## 1. What Each Party Owns
 
 **Learned Geek LLC owns:**
-- The underlying AI triage platform, codebase, architecture, and all technology
+- The underlying AI triage platform, codebase, architecture, and all technology — **in perpetuity, unconditionally**
 - All integrations (Twilio, Claude AI, PubMed, Blazor dashboard)
-- The platform IP in perpetuity, regardless of how the relationship evolves
+- All derivative works, enhancements, and future versions of the platform regardless of who funded them
+- All data architecture, models, and anonymized aggregate data insights derived from the platform
+- The right to license the platform to any party under any terms Learned Geek chooses, subject only to exclusivity provisions below
 
 **Dr. Martín Núñez owns:**
 - The DrOk brand, name, and identity
-- All client relationships with subscribing physicians
+- All client relationships with subscribing physicians under the DrOk brand
 - All marketing, sales, and business development activity
+
+**What Martin does NOT own:**
+- Any portion of the platform IP, codebase, or technology — regardless of the upfront build fee paid. The build fee is a development services fee, not an IP purchase.
+- Any right to transfer, sublicense, or assign his license without Learned Geek's written consent.
 
 ---
 
-## 2. What Each Party Does
+## 2. IP License — Not Assignment
+
+Martin's rights to the platform are granted by **license only**. Learned Geek does not assign, transfer, or co-own any IP with Martin under any circumstances. If Martin ever wishes to acquire the platform outright, that is a separate negotiation at fair market value — it is not implied by any term of this agreement.
+
+**Learned Geek retains the right** to white-label the platform to other brands, physician networks, or markets after the exclusivity period, with Martin's data and identity fully isolated at all times.
+
+---
+
+## 3. What Each Party Does
 
 **Learned Geek LLC is responsible for:**
 - Building, hosting, and maintaining the platform
@@ -41,13 +55,13 @@ Version: 0.1 — Internal draft, pending Erika review before sharing with Martin
 - Onboarding and supporting physician clients
 - Clinical credibility and domain guidance
 - Regulatory navigation in Peru (DIGEMID, Ley 29733, etc.)
-- Providing clinical validation during development (UAT sign-off)
+- Providing clinical validation during development (UAT sign-off required before go-live)
 
 ---
 
-## 3. Upfront Build Fee
+## 4. Upfront Build Fee
 
-To cover development costs and risk during the build phase, Martin pays Learned Geek a reduced upfront fee structured to milestones:
+To cover development costs and risk during the build phase, Martin pays Learned Geek a reduced upfront fee structured to milestones. This fee is a **development services fee only** — it does not convey any ownership, equity, or IP rights.
 
 | Milestone | Payment |
 |---|---|
@@ -61,7 +75,7 @@ To cover development costs and risk during the build phase, Martin pays Learned 
 
 ---
 
-## 4. Monthly Platform Revenue Split
+## 5. Monthly Platform Revenue Split
 
 Once live, revenue from physician subscriptions is split as follows:
 
@@ -77,15 +91,16 @@ Once live, revenue from physician subscriptions is split as follows:
 
 ---
 
-## 5. Exclusivity
+## 6. Exclusivity
 
 - Learned Geek grants Martin **exclusive rights** to the DrOk brand on the platform for **24 months** from go-live date
-- After 24 months, Learned Geek may white-label the platform to other physician networks or brands, provided DrOk's data and identity remain fully isolated
-- Martin may negotiate an exclusivity extension prior to the 24-month expiration
+- After 24 months, Learned Geek may white-label the platform to other physician networks or brands; Martin's data and identity remain fully isolated at all times
+- Martin may negotiate an exclusivity extension prior to the 24-month expiration — extension is not automatic
+- Exclusivity applies to the DrOk brand only — it does not prevent Learned Geek from building unrelated products or serving unrelated clients
 
 ---
 
-## 6. Minimum Activity Expectation
+## 7. Minimum Activity Expectation
 
 To keep the exclusivity period active, Martin commits to:
 - At least **3 paying physicians** (beyond himself) on the platform within **12 months** of go-live
@@ -95,21 +110,32 @@ To keep the exclusivity period active, Martin commits to:
 
 ---
 
-## 7. If Either Party Exits
+## 8. Right of First Refusal
 
-- If Learned Geek exits: Martin receives a source code escrow release and right to engage another developer to maintain the platform. Revenue share obligations end.
-- If Martin exits: Learned Geek retains full platform IP and may pursue other brand partners. Martin's DrOk brand remains his.
+**If Learned Geek receives an offer to acquire the platform:** Martin has the right to match that offer within 30 days before Learned Geek accepts a third-party acquisition.
+
+**If Martin receives an offer to acquire the DrOk brand or his license rights:** Learned Geek has the right to match that offer within 30 days.
+
+**If Learned Geek chooses to sell the platform:** Martin's license rights survive the sale under the same terms. A new platform owner cannot terminate Martin's license without cause.
+
+---
+
+## 9. If Either Party Exits
+
+- **If Learned Geek exits:** Martin receives a source code escrow release and the right to engage another developer to maintain the platform. Revenue share obligations end. IP remains Learned Geek's (or its successors').
+- **If Martin exits:** Learned Geek retains full platform IP and may pursue other brand partners. Martin's DrOk brand remains his.
 - Either party may exit with **90 days written notice** after the initial 24-month term.
 
 ---
 
-## 8. What This Is Not
+## 10. What This Is Not
 
 This term sheet does not cover:
 - Clinical liability (addressed in the engagement letter)
 - Data processing obligations (addressed in the DPA)
 - Specific technical specifications (addressed in the technical spec)
 - Peruvian regulatory compliance obligations (Martin and Carlos Rojas)
+- Any equity arrangement — this is a licensing and revenue share agreement, not an equity partnership
 
 ---
 
