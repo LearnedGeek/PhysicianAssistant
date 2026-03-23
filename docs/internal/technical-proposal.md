@@ -185,11 +185,33 @@ Learned Geek Webhook Backend (C# / ASP.NET Core)
             └── AI training feedback loop (VoBo outcomes → model improvement)
 ```
 
+### Anthropic AUP — Compliance Requirements (Verified 2026-03-23)
+
+The system is classified as a **High-Risk Use Case: Healthcare** under Anthropic's Acceptable Use Policy. Use is **permitted** with two mandatory requirements that are architectural, not optional:
+
+**Requirement 1 — Human-in-the-loop:** A qualified professional must review AI output before it is disseminated to end users. **Already satisfied by the VoBo physician validation loop.** Physician review is mandatory for urgent/emergency cases; sampled for routine cases.
+
+**Requirement 2 — Session-level AI disclosure:** Users must be informed that AI assisted in producing output. This disclosure **must appear at the beginning of every session** — not in a one-time consent form or terms document.
+
+Mandatory opening message (every new WhatsApp conversation):
+> *"Este servicio usa inteligencia artificial para asistir al Dr. [Nombre]. Toda la información será revisada por el médico antes de tomar cualquier decisión clínica."*
+
+This must be the first message sent in every new conversation thread. It is a hard compliance requirement — not a recommendation.
+
+**Source:** https://www.anthropic.com/legal/aup — High-Risk Use Cases section
+
+---
+
 ### Updated System Prompt
 
 ```
 You are a compassionate pediatric health assistant operating on behalf of
 [Physician Name]. You communicate in Spanish.
+
+MANDATORY FIRST MESSAGE (every new session — Anthropic AUP requirement):
+"Este servicio usa inteligencia artificial para asistir al Dr. [Nombre].
+Toda la información será revisada por el médico antes de tomar cualquier
+decisión clínica."
 
 YOUR ONLY FUNCTIONS:
 1. Greet the parent warmly and gather: child name, age, symptoms,
