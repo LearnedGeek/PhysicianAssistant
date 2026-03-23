@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>action-items-martin-es.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="%C3%ADtems-de-acci%C3%B3n-pre-discovery--dr-n%C3%BA%C3%B1ez">Ítems de Acción Pre-Discovery — Dr. Núñez</h1>
+<p><strong>De:</strong> Mark McArthey, Learned Geek LLC
+<strong>Fecha:</strong> 18 de marzo de 2026
+<strong>Propósito:</strong> Puntos que necesitan tu aporte o acción antes o durante nuestra fase de Discovery. Estos nos ayudarán a avanzar de manera eficiente una vez que comencemos.</p>
+<hr>
+<p>Martín,</p>
+<p>Gracias por las respuestas tan detalladas — nos ayudaron mucho a dar forma a la dirección técnica. Hemos avanzado bastante de nuestro lado con la arquitectura, los requisitos de cumplimiento y la planificación, y llegamos a un punto donde necesitamos tu ayuda en varias cosas que solo se pueden resolver desde Perú.</p>
+<p>No te preocupes por abordar todo de golpe — te los paso ahora para que los vayas pensando, y así podemos priorizar los más importantes para nuestra llamada de Discovery.</p>
+<hr>
+<h2 id="prioridad-1--necesitamos-respuestas-antes-de-construir">Prioridad 1 — Necesitamos Respuestas Antes de Construir</h2>
+<p>Estos puntos podrían cambiar el alcance, la arquitectura o la viabilidad del proyecto. Necesitamos claridad sobre ellos antes de comprometernos con un plan de construcción.</p>
+<h3 id="11--asesor%C3%ADa-legal-privacidad-de-datos-en-per%C3%BA">1.1 — Asesoría Legal (Privacidad de Datos en Perú)</h3>
+<p>Necesitamos un abogado peruano especializado en privacidad de datos (Ley 29733) e idealmente en regulación de datos de salud. El sistema almacenará registros longitudinales de salud pediátrica y transferirá datos a servicios en la nube con sede en EE.UU. (Anthropic, Twilio). Preguntas específicas para el abogado:</p>
+<ul>
+<li><strong>Registro en la APDP:</strong> ¿El sistema requiere registro ante la Autoridad Nacional de Protección de Datos Personales? ¿Quién registra — tú como médico (responsable del tratamiento) o nosotros como proveedor tecnológico (encargado del tratamiento)?</li>
+<li><strong>Transferencia internacional de datos:</strong> ¿Qué mecanismo legal se requiere para transferir datos de salud pediátrica a EE.UU.? ¿Es suficiente el consentimiento explícito o se necesita una determinación formal de nivel adecuado de protección?</li>
+<li><strong>Consentimiento para menores:</strong> ¿Quién puede consentir legalmente el procesamiento de datos de salud de un niño? ¿Solo el tutor legal? ¿Ambos padres? ¿Hay umbrales de edad?</li>
+<li><strong>Retención de datos vs. derecho de supresión:</strong> Si un padre solicita que se eliminen los datos de su hijo, ¿eso entra en conflicto con los requisitos de retención de registros médicos?</li>
+</ul>
+<p><strong>Lo que necesito de ti:</strong> ¿Puedes recomendar un abogado peruano que maneje esto? Si no, puedo investigar firmas, pero alguien en tu red profesional que entienda tanto datos de salud como la Ley 29733 sería ideal. <strong>Este es el punto más importante de toda la lista.</strong></p>
+<h3 id="12--clasificaci%C3%B3n-como-dispositivo-m%C3%A9dico--regulatoria">1.2 — Clasificación como Dispositivo Médico / Regulatoria</h3>
+<p>Esta es una pregunta que necesita respuesta del asesor legal, pero quiero que la tengas en cuenta: <strong>¿podría DIGEMID clasificar este sistema como dispositivo médico?</strong> La IA genera una impresión diagnóstica basada en síntomas y valores de laboratorio. Algunas jurisdicciones clasifican las herramientas de IA de apoyo a decisiones clínicas como dispositivos médicos, lo que requeriría registro y aprobación regulatoria.</p>
+<p>De manera similar: <strong>¿este sistema cae bajo la ley de telemedicina de Perú (Ley 30421)?</strong> Una IA que se comunica con pacientes en nombre de un médico fuera de horario podría considerarse telemedicina.</p>
+<p><strong>Lo que necesito de ti:</strong> Plantea ambas preguntas al asesor legal. Si la respuesta a cualquiera de las dos es &quot;sí&quot; o &quot;tal vez,&quot; necesitamos entender los requisitos antes de construir — no después.</p>
+<h3 id="13--restricciones-del-acuerdo-de-franquicia">1.3 — Restricciones del Acuerdo de Franquicia</h3>
+<p>¿Tu acuerdo de franquicia con Infanzia / Kezer-Lab restringe o requiere aprobación para implementar herramientas de IA que interactúen con clientes en nombre de la marca?</p>
+<p><strong>Lo que necesito de ti:</strong> Revisa tu acuerdo de franquicia para cualquier cláusula sobre implementación de tecnología, o consulta con tu contacto de franquicia.</p>
+<h3 id="14--rango-de-presupuesto">1.4 — Rango de Presupuesto</h3>
+<p>Aún no hemos hablado de presupuesto, y quiero prepararte una propuesta que tenga sentido para ti. El sistema completo (chatbot de productos + sistema de triaje + panel de control) es una inversión importante. Puedo armar opciones escalonadas — desde un MVP más básico hasta la visión completa — pero me ayuda saber por dónde andas.</p>
+<p><strong>Lo que necesito de ti:</strong> Un rango general o nivel de comodidad. No te compromete a nada — simplemente me ayuda a enfocar la propuesta en lo que realmente tiene sentido.</p>
+<h3 id="15--expectativas-de-cronograma">1.5 — Expectativas de Cronograma</h3>
+<p>¿Cuál es tu objetivo para tener el primer sistema operativo? ¿Hay plazos externos que impulsen esto (conferencia, revisión de franquicia, hito de volumen de pacientes)?</p>
+<hr>
+<h2 id="prioridad-2--necesarios-durante-la-fase-de-discovery">Prioridad 2 — Necesarios Durante la Fase de Discovery</h2>
+<p>Estos son puntos que trabajaremos juntos durante Discovery, pero pensar en ellos ahora hará la llamada más productiva.</p>
+<h3 id="21--umbrales-cr%C3%ADticos-de-valores-de-laboratorio-futuro--no-urgente">2.1 — Umbrales Críticos de Valores de Laboratorio (Futuro — No Urgente)</h3>
+<p>En algún momento durante la construcción, vamos a necesitar umbrales numéricos específicos para valores pediátricos que deberían activar la vía de emergencia — como lo que mencionaste en tu respuesta a la P6 (hemoglobina, glucosa, etc. por grupo de edad). Vamos a preparar el sistema para soportar esto, pero no necesitamos los números todavía. Solo es algo para que lo vayas pensando cuando tengas tiempo — lo trabajamos juntos cuando lleguemos a esa parte.</p>
+<h3 id="22--tasa-de-muestreo-vobo">2.2 — Tasa de Muestreo VoBo</h3>
+<p>Mencionaste que los casos de rutina (no urgentes) no necesitan 100% de revisión médica — una muestra estadísticamente significativa es suficiente. ¿Qué tasa de muestreo quieres iniciar? ¿20%? ¿30%? ¿Debería variar por categoría (por ejemplo, mayor muestreo para casos que involucren imágenes)?</p>
+<h3 id="23--red-de-m%C3%A9dicos">2.3 — Red de Médicos</h3>
+<p>Has mencionado otros médicos además de ti. ¿La red de usuarios potenciales está identificada y en contacto contigo, o es aspiracional en esta etapa? Esto afecta si construimos multi-inquilino desde el día uno o lo agregamos después.</p>
+<h3 id="24--estado-del-mercado-en-eeuu">2.4 — Estado del Mercado en EE.UU.</h3>
+<p>Estabas en Expo West en Anaheim cuando nos conectamos inicialmente. ¿Hay interés activo en el mercado estadounidense para los productos Infanzia, y el chatbot de productos necesitaría soportar inglés y padres en EE.UU.?</p>
+<h3 id="25--documentaci%C3%B3n-de-productos">2.5 — Documentación de Productos</h3>
+<p>Para el Chatbot de Productos Infanzia (Línea de trabajo A), necesitaremos el catálogo completo de productos para construir la base de conocimiento:</p>
+<ul>
+<li>Fichas de producto para Biomilk, Infabiotix, Infavit y todos los demás productos</li>
+<li>Tablas de dosificación / uso recomendado</li>
+<li>Listas de ingredientes y certificaciones (certificaciones EU, detalles de fabricación)</li>
+<li>Preguntas frecuentes que comúnmente respondes</li>
+<li>Cualquier referencia clínica que quieras que el chatbot cite</li>
+</ul>
+<p><strong>Lo que necesito de ti:</strong> Comienza a reunir estos materiales. Formatos digitales (PDF, Word) están bien. Cuanto más completa sea la documentación, más preciso será el chatbot.</p>
+<hr>
+<h2 id="prioridad-3--para-tu-conocimiento">Prioridad 3 — Para Tu Conocimiento</h2>
+<p>Cosas que estamos resolviendo de nuestro lado, pero que quiero que sepas.</p>
+<h3 id="31--revisi%C3%B3n-de-cumplimiento-de-proveedores">3.1 — Revisión de Cumplimiento de Proveedores</h3>
+<p>Estamos revisando las políticas de uso aceptable de Anthropic (el proveedor de IA) y Meta/WhatsApp para confirmar que el uso médico/clínico está permitido. No anticipamos problemas, pero estamos verificando antes de construir sobre estas plataformas.</p>
+<h3 id="32--acuerdos-de-procesamiento-de-datos">3.2 — Acuerdos de Procesamiento de Datos</h3>
+<p>Ejecutaremos Acuerdos de Procesamiento de Datos (DPAs) con Twilio y Anthropic antes de cualquier implementación en producción. Tu asesor legal puede querer copias de estos para su revisión de cumplimiento.</p>
+<h3 id="33--estructura-empresarial">3.3 — Estructura Empresarial</h3>
+<p>Learned Geek LLC es una empresa de responsabilidad limitada con sede en EE.UU. Estamos evaluando si el alcance de este proyecto amerita cobertura adicional de responsabilidad profesional específica para sistemas médicos asistidos por IA.</p>
+<h3 id="34--aprobaci%C3%B3n-de-whatsapp-business">3.4 — Aprobación de WhatsApp Business</h3>
+<p>La aprobación de la API de WhatsApp Business puede tomar de 1 a 4 semanas. Comenzaremos este proceso al inicio de Discovery para que no se convierta en un cuello de botella.</p>
+<hr>
+<h2 id="llamada-de-discovery">Llamada de Discovery</h2>
+<p>Me encantaría coordinar nuestra llamada de Discovery cuando te acomode. Sé que te dije &quot;sin prisa, a tu ritmo&quot; — y eso sigue siendo así en general — pero arrancar la conversación de Discovery pronto nos permite resolver las preguntas legales y regulatorias temprano, que es donde realmente está el riesgo de cronograma. La parte técnica la tenemos clara; lo de cumplimiento es lo que toma más tiempo.</p>
+<p><strong>Agenda sugerida:</strong></p>
+<ol>
+<li>Revisar estos puntos — confirmar prioridades, aclarar dudas</li>
+<li>Presupuesto y cronograma — alinearnos</li>
+<li>Asesoría legal — próximos pasos</li>
+<li>Valores de laboratorio críticos — empezar a definirlos</li>
+<li>Documentación de productos — qué hay disponible hoy</li>
+<li>Red de médicos — estado actual</li>
+<li>Próximos pasos y cómo seguimos</li>
+</ol>
+<p>Dime 2–3 horarios que te sirvan. Soy flexible con la zona horaria.</p>
+<hr>
+<p>Saludos,</p>
+<p>Mark
+Learned Geek LLC
+markm@learnedgeek.com</p>
+
+</body>
+</html>

@@ -2,7 +2,7 @@
 ## Learned Geek — Working Document
 
 **Prepared by:** Mark McArthey  
-**Date:** March 17, 2026 (rev 2 — Martin's Q&A responses incorporated)  
+**Date:** March 17, 2026 (rev 3 — Martin's legal analysis incorporated, 2026-03-23)
 **Status:** Internal only — do not share with client  
 **Purpose:** Full technical reference, architecture decisions, resolved questions, risk assessment, and pricing framework for the Infanzia engagement
 
@@ -245,7 +245,14 @@ patients (
   date_of_birth DATE,
   first_seen TIMESTAMPTZ,
   last_seen TIMESTAMPTZ,
-  ehr_patient_id VARCHAR           -- null until future EHR integration
+  ehr_patient_id VARCHAR,          -- null until future EHR integration
+  -- Legal compliance (Ley 29733 + NTS 139-MINSA)
+  consent_captured_at TIMESTAMPTZ, -- when guardian consented
+  consent_guardian_identity JSONB, -- guardian name, relationship, custody status
+  blocked_at TIMESTAMPTZ,          -- set when parent requests "erasure" — data retained but inaccessible
+  block_reason TEXT,               -- reason for blocking
+  retain_until DATE,               -- 5 years from last_seen (calculated, enforced by application)
+  arco_requests JSONB              -- log of ARCO requests and outcomes
 )
 
 conversations (
@@ -349,7 +356,13 @@ physicians (
 | Impresión Dx. misinterpreted as a diagnosis by parent or physician | Medium | Very High | Precise label, engagement letter language, physician onboarding |
 | Category B image analysis inaccurate — AI misreads a photo | Medium | High | Mandatory disclaimer on every analysis; physician always validates |
 | Critical lab thresholds not defined before build | Medium | High | Resolve D008 in Discovery before writing emergency logic |
-| Ley 29733 compliance with longitudinal records + potential B2C layer | Medium | High | Legal review before launch; B2C layer needs separate sign-off |
+| Ley 29733 compliance — overall | Low-Medium | High | Martin's analysis: proposal likely compliant; Carlos Rojas (Rebaza, Alcázar) reviewing |
+| SCCs not yet in place with Anthropic/Twilio for Peru → US data transfer | High | Very High | Explicit consent alone is NOT sufficient; SCCs + ANPD notification required before launch |
+| DIGEMID medical device classification — unknown | Unknown | Very High | If classified as medical device: registration, clinical testing, approval required — viability question |
+| RENHICE / Ley 30024 applicability — unknown | Unknown | Medium | May impose interoperability requirements; Phase 6+ at minimum |
+| Consent design for cross-border pediatric data — complex | Medium | High | Under-14 guardian required; cross-border requires parental consent regardless of age; both parents for sensitive data |
+| No data blocking mechanism in current schema | High | High | Hard delete is illegal; must implement 5-year blocking with restricted access — schema change required |
+| ARCO rights not yet designed into admin portal | High | Medium | Required by Ley 29733; intake + tracking + response deadlines must be in admin portal |
 | Multiple guardians per patient — identity confusion | Medium | Medium | Design deduplication in Discovery; MVP can default to one number = one patient |
 | Scope creep into EHR integration before foundation is solid | Medium | High | Explicitly defer in engagement letter |
 | WhatsApp Business API approval delays | Medium | Medium | Start at Phase 1 kickoff |
@@ -521,14 +534,23 @@ Martin's Q4 response reveals he is already thinking about this as a platform: B2
 - [x] Build POC (Phase 0) — core pipeline validated (Twilio + Claude + PubMed RAG + bilingual + persistence) ✓
 - [x] Comprehensive task breakdown — ~271 tasks across 16 milestones (see `docs/technical/TASK-BREAKDOWN.md`) ✓
 - [x] Legal & compliance gap analysis — 58 legal tasks identified including medical device classification risk ✓
+- [x] Pre-Discovery action items document sent to Martin via WhatsApp + email ✓
+- [x] Martin's email addresses established (tyrmanb@gmail.com, martin.nunez@schweringmbh-lab.com) ✓
+- [x] Carlos Rojas (Rebaza, Alcázar & De Las Casas) engaged as legal counsel — carlos.rojas@rebaza-alcazar.com ✓
+- [x] Martin's legal analysis received (2026-03-23) — 4 Ley 29733 questions answered in depth; more responses coming ✓
+- [x] Legal findings documented and summarized (see `docs/internal/LEGAL-COMPLIANCE.md`) ✓
+
+### Awaiting from Martin ("vuelvo en breve con lo demás")
+- [ ] Remaining responses to non-legal action items (franchise restrictions, budget, timeline, etc.)
+- [ ] Carlos Rojas formal review of legal items (L001, L002, L008, L012, L019, L022, L024, L026, L035, L048)
 
 ### Send to Martin (Priority — drives everything else)
-- [ ] Send Martin pre-Discovery action items document (see `docs/client/action-items-martin-en.md` / `-es.md`)
-- [ ] Explicitly ask Martin for Peruvian legal counsel recommendation (Ley 29733 + health data)
-- [ ] Ask Martin to check DIGEMID medical device classification risk with counsel
+- [x] ~~Send Martin pre-Discovery action items document~~ ✓ Done
+- [x] ~~Ask for Peruvian legal counsel recommendation~~ ✓ Carlos Rojas engaged
+- [ ] Schedule Discovery call — he said "sin prisa" but nudge gently once remaining responses arrive
+- [ ] Ask Martin to check DIGEMID medical device classification risk with Carlos Rojas
 - [ ] Ask Martin to review franchise agreement for AI deployment restrictions
-- [ ] Request budget range and timeline expectations
-- [ ] Request Martin suggest 2–3 times for Discovery call
+- [ ] Request budget range and timeline expectations (if not in next response)
 
 ### Learned Geek Actions (Parallel — don't wait for Martin)
 - [ ] Register free NCBI API key: ncbi.nlm.nih.gov/account (2 min)
