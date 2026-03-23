@@ -74,8 +74,8 @@ Pediatric triage AI is **permitted** under Anthropic's High-Risk Use Case: Healt
 |---|---|---|---|
 | L001 | Draft engagement letter — or have attorney draft | 🔴 Open | Must include: scope, liability cap, IP ownership, indemnification, impresión Dx. definition |
 | L002 | Confirm engagement letter reviewed by US attorney | 🔴 Open | You are a US LLC; US law governs your contract |
-| L003 | Ask Erika Medina Valencia to review engagement letter and DPA from Peruvian/international law perspective | 🔴 Open | Sister-in-law; corporate + international business law at Estudio Muñiz, Lima — independent of Carlos Rojas |
-| L004 | Assess whether Learned Geek LLC needs to register as a foreign entity doing business in Peru | 🔴 Open | Erika is well-placed to answer this |
+| L003 | Get independent informal legal review of engagement letter and DPA (Peruvian/international law perspective) | 🔴 Open | Corporate + international business law background — independent of Carlos Rojas |
+| L004 | Assess whether Learned Geek LLC needs to register as a foreign entity doing business in Peru | 🔴 Open | Informal legal contact well-placed to answer this |
 | L005 | Assess Wisconsin / US tax treatment of Peruvian client revenue | 🔴 Open | International income may have FBAR or Form 8938 implications — accountant question |
 | L006 | Confirm IP ownership language: Learned Geek retains platform IP; Martin licenses | 🔴 Open | Especially critical given productization potential |
 

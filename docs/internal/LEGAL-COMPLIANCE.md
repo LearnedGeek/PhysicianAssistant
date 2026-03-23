@@ -14,9 +14,9 @@
 | Name | Role | Firm | Coverage |
 |---|---|---|---|
 | Carlos Rojas | Technology / New Tech Specialist | Rebaza, Alcázar & De Las Casas (Lima) | DIGEMID, Ley 29733, Ley 30421, tech regulatory |
-| Erika Medina Valencia | Corporate & International Business Law, LLM IE Law School | Estudio Muñiz (Lima) | Engagement letter, DPA, cross-border contracts, international business — Mark's sister-in-law; independent review role |
+| Independent counsel (informal) | Corporate & International Business Law, LLM in International Business Law | Estudio Muñiz (Lima) | Engagement letter, DPA, cross-border contracts, international business — informal gut-check role |
 
-Having both available is strong coverage: Carlos on the tech/regulatory side, Erika as independent review of contractual and cross-border business language.
+Having both available is strong coverage: Carlos on the tech/regulatory side, independent counsel as informal review of contractual and cross-border business language.
 
 ---
 

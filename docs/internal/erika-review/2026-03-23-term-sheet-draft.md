@@ -3,7 +3,7 @@
 
 Prepared by: Learned Geek LLC
 Date: March 2026
-Version: 0.2 — Internal draft, pending Erika review before sharing with Martin
+Version: 0.2 — Internal draft, pending independent legal review before sharing with Martin
 
 ---
 
@@ -141,8 +141,8 @@ This term sheet does not cover:
 
 ## Next Steps
 
-1. Erika reviews this term sheet for structural soundness (Peruvian law perspective)
-2. Mark refines based on Erika's feedback
+1. Independent legal review of term sheet for structural soundness (Peruvian law perspective)
+2. Mark refines based on feedback
 3. Carlos Rojas confirms DIGEMID classification — if medical device, scope changes significantly
 4. Term sheet shared with Martin as pre-Discovery alignment document
 5. Discovery call scheduled — term sheet and technical scope both on the agenda
