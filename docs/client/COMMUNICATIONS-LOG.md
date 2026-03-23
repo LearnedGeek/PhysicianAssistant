@@ -10,6 +10,7 @@ Chronological record of all client-facing communications, responses, and notable
 |---|---|---|
 | Martín Núñez | Client / Pediatrician | tyrmanb@gmail.com, martin.nunez@schweringmbh-lab.com |
 | Carlos Rojas | Legal / New Technology Specialist (Rebaza, Alcázar & De Las Casas) | carlos.rojas@rebaza-alcazar.com |
+| Erika Medina Valencia | Legal / Corporate & International Business Law (Estudio Muñiz) — Mark's sister-in-law | TBD (family contact) |
 
 ---
 
