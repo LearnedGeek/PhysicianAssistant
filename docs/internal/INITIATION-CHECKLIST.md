@@ -1,7 +1,7 @@
 # Project Initiation Checklist — Learned Geek / Mark McArthey
 ## Proyecto DrOk — Pre-Engagement Must-Do Items
 
-**Last updated:** March 23, 2026
+**Last updated:** March 23, 2026 (insurance research + Anthropic AUP resolved)
 **Purpose:** Mark's personal action tracker for everything that must be done *before* production work begins. These are non-code obligations — legal, business, compliance, vendor — that cannot be delegated to an intern and cannot be skipped. Each item has a deadline tier and a hard blocker flag.
 
 **Deadline tiers:**
@@ -14,16 +14,34 @@
 
 ## 1. Insurance (🔥 This Week)
 
+**Researched pricing (2025-2026 market):**
+
+| Policy | Realistic Annual Range for Solo LLC |
+|---|---|
+| E&O / Professional Liability ($1M/$1M) | $500 – $900/yr |
+| Cyber Liability ($1M) | $500 – $900/yr |
+| Bundled Tech E&O + Cyber | $800 – $1,500/yr |
+| With health-data surcharge (estimated) | $1,000 – $2,000/yr |
+
+Under $1,500/year all-in is achievable. Peru jurisdiction + single small-clinic client + sub-$100K revenue all work in your favor. **2026 is a buyer's market** — get quotes now.
+
+**Key questions to ask every broker:**
+- Does this cover contractors or subcontractors working on my engagements?
+- Does this cover medical-adjacent AI software for a foreign client?
+- Are there AI hallucination exclusions? (Emerging in 2026 policies — watch for this)
+- What do I need to do to extend coverage to a 1099 contractor?
+
+**Recommended quote sources:** TechInsurance.com and Insureon (brokers — hit multiple carriers simultaneously), then a direct Hiscox quote. Compare all three.
+
 | # | Item | Status | Notes |
 |---|---|---|---|
-| I001 | Get E&O (Errors & Omissions) insurance quotes | 🔴 Open | Medical-adjacent software; standard solo consultant need |
-| I002 | Get professional liability insurance quotes | 🔴 Open | Overlaps with E&O — some policies combine |
-| I003 | Get cyber liability insurance quotes | 🔴 Open | You will handle pediatric PHI — this is not optional |
-| I004 | Confirm Learned Geek LLC protects Mark personally for medical-adjacent + international work | 🔴 Open | Quick call with a business attorney; LLC may need supplementing |
+| I001 | Get bundled Tech E&O + Cyber quotes from TechInsurance.com | 🔴 Open | Target: under $1,500/yr; $1M/$1M limits |
+| I002 | Get bundled Tech E&O + Cyber quotes from Insureon | 🔴 Open | Run parallel to I001 |
+| I003 | Get direct quote from Hiscox | 🔴 Open | Strong reputation for solo consultants |
+| I004 | Ask each broker explicitly about contractor/intern coverage and AI exclusions | 🔴 Open | Hannah + any future contractors must be covered |
+| I005 | Confirm Learned Geek LLC adequately protects Mark personally for medical-adjacent + international work | 🔴 Open | Quick call with a business attorney |
 
-**Why this week:** You are currently uninsured for this category of work. If Discovery happens before insurance is in place and something goes sideways, you have no coverage. Insurance takes days to weeks to bind — start now.
-
-**Suggested providers to quote:** Hiscox, Embroker, Argo (E&O + cyber packages for tech consultants). Check WCTC connections or professional associations for group rates.
+**Why this week:** You are currently uninsured for this category of work. Insurance takes days to weeks to bind — start now.
 
 ---
 
@@ -33,11 +51,18 @@ These are short reads. Do not sign an engagement letter or write production code
 
 | # | Item | Status | Notes |
 |---|---|---|---|
-| V001 | Read Anthropic Acceptable Use Policy — check for medical/clinical restrictions | 🔴 Open | Specifically: clinical impressions, medical advice, pediatric data |
+| V001 | ~~Read Anthropic Acceptable Use Policy~~ | 🟢 Resolved | **PERMITTED** as High-Risk Use Case. Two mandatory requirements — see below. |
 | V002 | Read Meta/WhatsApp Business Policy — check for health data restrictions | 🔴 Open | Health data over WhatsApp may have explicit terms |
 | V003 | Read Twilio Acceptable Use Policy — check for medical use restrictions | 🔴 Open | Twilio has HIPAA-eligible services; confirm what's required for Peru |
 | V004 | Check whether Anthropic offers a DPA / BAA for health data processing | 🔴 Open | If they process PHI through the API, a formal agreement may be required |
 | V005 | Check whether Twilio offers a DPA / BAA for health data | 🔴 Open | Twilio does offer HIPAA Business Associate Agreements — understand scope |
+
+**Anthropic AUP — resolved (V001):**
+Pediatric triage AI is **permitted** under Anthropic's High-Risk Use Case: Healthcare category. Two requirements are **mandatory and architectural** — not optional:
+
+1. **Human-in-the-loop:** A qualified professional must review AI output before it is disseminated to end users. ✅ Already designed — this is the VoBo physician validation loop.
+2. **Disclosure:** Users must be informed that AI assisted in producing the output. This disclosure **must appear at the beginning of every session** — not buried in a terms document.
+   - ⚠️ **Action required:** Add mandatory AI disclosure to the opening message of every WhatsApp conversation. "Este servicio utiliza inteligencia artificial para asistir al médico. [Dr. Núñez] revisará toda la información antes de tomar decisiones clínicas." Must be the first message every session.
 
 **If any vendor prohibits the intended use:** that is a project architecture change, not a workaround. Find out now.
 
@@ -129,11 +154,13 @@ These are not initiation items but are tracked here so nothing falls through the
 
 ## Summary — What to Do This Week
 
-1. **Insurance quotes** (I001–I004) — call Hiscox or Embroker, get quotes in hand
-2. **Read three vendor policies** (V001–V003) — 30–60 min total; do not skip
-3. **Nudge Martin on Carlos** (C001–C004) — one WhatsApp message, politely
+1. **Insurance quotes** (I001–I003) — TechInsurance.com, Insureon, Hiscox; target under $1,500/yr bundled
+2. **Read WhatsApp + Twilio policies** (V002–V003) — Anthropic is resolved ✅; two left
+3. **Nudge Martin on Carlos / DIGEMID** (C001–C004) — WhatsApp message drafted and ready to send
 4. **Register NCBI API key** (A001) — literally 2 minutes
 5. **Start WhatsApp Business API application** (A002) — lead time is the constraint
+
+**Architecture note from Anthropic AUP:** Add mandatory AI disclosure as the first message of every WhatsApp session — required, not optional.
 
 Everything else can follow in the next 1–2 weeks, but these five unblock everything downstream.
 
