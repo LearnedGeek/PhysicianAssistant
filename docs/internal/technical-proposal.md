@@ -358,6 +358,10 @@ physicians (
 | D009 | Multiple guardians per patient — identity resolution approach? | Medium |
 | D010 | B2C parent subscription — Phase 1 or later? | Medium |
 | D011 | VoBo sampling rate for routine cases? | Medium |
+| D012 | Emergency keyword list — Martin defines in parent-language Spanish | **Critical — go-live blocker** |
+| D013 | Critical lab value numeric thresholds — Martin defines with clinical input | **Critical — go-live blocker** |
+| D014 | Physician override rate threshold agreement — what % triggers a go-live hold? | High |
+| D015 | UAT participation commitment from Martin — contractual, not optional | High |
 
 ### Technical — Answer During POC
 
@@ -392,75 +396,126 @@ physicians (
 
 ---
 
-## AI Accuracy and Hallucination Risk
+## The Authenticity Boundary — Confabulation Risk and Mitigation
 
-This is one of the most important architectural considerations in the project and must be designed for explicitly — not treated as an edge case. Martin raised accuracy concerns in the initial meeting (his OpenEvidence reference was fundamentally about this), and the problem is real and well understood in the field. The technical term is **hallucination under retrieval failure**: the AI generates a plausible-sounding answer even when it has insufficient or no retrieved evidence to support it.
+**This is the most important architectural consideration in the project.** The root cause is well understood and named: **smoothness over truth** — the LLM will generate confident, plausible-sounding output to maintain conversational flow even when its evidence is insufficient to support it. In a pediatric triage system, this failure mode is not acceptable at any tier. The architecture must make confabulation structurally difficult, not merely discouraged by instruction.
 
-Both systems face this risk differently.
+Client-facing explanation: see `docs/client/authenticity-boundary-en.md`
+
+---
+
+### Risk Tiers
+
+Confabulation risk is tiered by consequence. The mitigations are calibrated to tier.
+
+| Tier | Scenario | Likelihood | Impact | Notes |
+|---|---|---|---|---|
+| 1 | Confabulated impression for routine non-urgent case | Medium | Moderate | Physician catches it; child was never at risk; trust erosion over time |
+| 2 | Confabulated impression understates urgency | Low-Medium | Serious | Physician nudged toward routine when urgent was correct; delayed response |
+| 3 | Emergency detection failure — emergency routed as non-urgent | Low | Catastrophic | Bypasses physician entirely during time-critical window; primary architectural threat |
+| 3 | Critical lab value misread as normal | Low | Catastrophic | Same consequence as Tier 3 above |
+
+**Tier 3 is the design target.** Tiers 1 and 2 are managed by the two-gate system. Tier 3 requires a categorically different architecture.
+
+---
+
+### The Two-Gate System (Tiers 1 and 2)
+
+**Gate 1 — Evidence Gate (pre-physician)**
+
+Operates in sequence before any clinical impression reaches the physician queue:
+
+1. **Retrieval confidence check** — PubMed results are scored for semantic relevance to the query. If all results fall below threshold, or nothing is retrieved, impression generation is skipped. Case is flagged: *"Insufficient clinical evidence — physician review required without AI impression."* A null impression is the correct output, not a failure.
+
+2. **Citation enforcement** — Claude's impression output is structured JSON. Every factual claim requires a `source` field populated with a PMID from the retrieved set. Claims with empty `source` fields are stripped by the output parser. If the entire impression cannot be attributed, it is replaced with null. This is enforced by code, not instruction.
+
+3. **Low-temperature generation** — Clinical impression generation runs at temperature 0.2–0.3. Trades fluency for factual conservatism. The model says less and says it more carefully.
+
+4. **Post-generation attribution verification** — A secondary parse verifies every factual claim in the output maps to a retrieved abstract passage. Unattributable claims are stripped before the output is written to the database.
+
+```json
+{
+  "impresion_dx": "Possible viral pharyngitis based on symptom duration and fever pattern",
+  "sources": ["PMID:12345678", "PMID:23456789"],
+  "confidence": "moderate",
+  "evidence_sufficient": true,
+  "retrieval_score": 0.84
+}
+```
+
+If `evidence_sufficient` is false or `sources` is empty — the impression field is null in the physician queue.
+
+**Gate 2 — Physician Gate (VoBo)**
+
+All cases that pass Gate 1 require physician review before any clinical decision. Urgent/emergency cases are locked until VoBo is completed. Routine cases are sampled. Physician override rate is tracked from day one — if overrides exceed ~15–20%, the system is not production-ready.
+
+**Physician-curated fallback layer** — query categories with consistently low retrieval scores or high override rates are identified and routed directly to physician review without AI impression, bypassing Gate 1 entirely.
 
 ---
 
 ### Workstream A — Infanzia Product Chatbot
 
-**The failure mode:** A parent asks about a dosage, ingredient, or product detail that isn't in the knowledge base. Rather than acknowledging the gap, the AI confabulates a plausible-sounding answer from its general training data.
+Same two-gate principle applies at lower stakes:
 
-**Mitigations:**
-
-**Retrieval confidence thresholding.** Before Claude answers, the RAG layer checks whether retrieved documents match the query with sufficient semantic similarity. If the confidence score falls below a defined threshold, the system routes to a safe fallback response rather than allowing Claude to answer from general knowledge.
-
-**Constrained system prompt.** Claude is explicitly instructed: *"Answer only from the provided product documentation. If the answer is not clearly supported by the documents, say so and offer to connect the parent with a representative."* This reduces but does not eliminate the problem — Claude can still rationalize that something is implied by the docs.
-
-**Citation enforcement.** For factual claims (dosage amounts, ingredients, certifications), Claude must cite the specific document and passage. If it cannot cite, it cannot claim. Detectable and enforceable in output validation.
-
-**Escalation path.** Any query the system cannot answer with sufficient confidence routes to: "I don't have that information — a representative will follow up with you." This is a feature, not a failure.
+- **Retrieval confidence thresholding** — if product documentation does not clearly support the query, escalate to representative: *"I don't have that information — a representative will follow up."*
+- **Citation enforcement** — factual claims (dosage, ingredients, certifications) must cite specific document and passage; unprovable claims are blocked
+- **Constrained system prompt** — *"Answer only from provided product documentation. If the answer is not clearly supported by the documents, say so."*
 
 ---
 
-### Workstream B — Physician Communication System
+### Emergency Pathway — Separate Architecture, Zero LLM Latitude
 
-**The risk is higher** and splits into two distinct failure modes:
+The emergency detection pathway operates under fundamentally different rules. **The LLM has no creative latitude here.**
 
-**Failure mode 1 — No relevant PubMed results.** ESearch returns nothing or low-relevance results. Claude generates a clinical impression from its general medical training, which may be outdated, wrong for the Peruvian clinical context, or simply hallucinated.
+**Design principle: over-inclusive, not precise.**
+A false positive (non-emergency escalated to ER) is an inconvenience.
+A false negative (real emergency routed as routine) is the catastrophic Tier 3 scenario.
+When in doubt, the system escalates. Every time. There is no "probably not an emergency" path.
 
-**Failure mode 2 — Results retrieved but misapplied.** PubMed returns tangentially related abstracts. Claude over-generalizes and produces a confident-sounding clinical impression that the retrieved evidence doesn't actually support.
+**Implementation:**
+- Emergency keyword matching runs **before** any retrieval or impression generation
+- Matching is deterministic — keyword list, not LLM judgment
+- On match: hardcoded response fires immediately:
+  > *"Lo que describes suena como una emergencia médica. Por favor llame al 112 / vaya a urgencias AHORA. No espere la respuesta del médico."*
+- Claude does not write or modify this message under any circumstances
+- Physician receives simultaneous SMS alert
+- Case is queued as EMERGENCY with mandatory VoBo — locked until physician reviews
 
-**Mitigations:**
+**The emergency keyword list is a clinical document, not a technical one.**
+Martin must define it in the language parents actually use — colloquial Spanish, not medical terminology. He must sign off on it formally before go-live. This sign-off is documented and retained. It establishes that clinical boundaries were set by a physician, not by software engineers.
 
-**Explicit RAG fallback handling.** If PubMed returns zero results or all results fall below the confidence threshold, Claude is explicitly instructed: *"No relevant clinical evidence was retrieved. Do not generate a clinical impression. Capture symptoms and flag for physician review without an evidence-based assessment."* The `impresion_dx` field is left null or populated with "Insufficient evidence — physician review required."
-
-**Source attribution enforcement.** Claude's clinical impression must cite specific PMIDs from the retrieved set. Output is parsed to verify every claim maps to a retrieved abstract. Responses that cannot be attributed are rejected and replaced with the null fallback.
-
-**Temperature control.** Clinical impression generation runs at low temperature (0.2–0.3), trading fluency for factual conservatism. The right tradeoff in a medical context.
-
-**Physician VoBo as the primary safeguard.** The VoBo validation loop is not just a compliance step — it is the most important accuracy safeguard in the system. The AI may confabulate; the physician catches it. The audit trail records when it happened. Over time the feedback loop improves the system's performance in specific query categories. Martin's insistence on physician validation is clinically sound for exactly this reason.
-
-**Physician-curated fallback layer.** Over time, categories of queries where the AI consistently underperforms (low PMID relevance, high physician override rate) can be identified and routed to a "physician review only" pathway from the start — bypassing AI assessment entirely for those categories.
-
----
-
-### Testing and Feedback Requirements
-
-AI accuracy in this context cannot be validated in a lab environment alone. **Martin's active participation in testing is a project requirement, not a nice-to-have.** Specifically:
-
-- During UAT, Martin and ideally one or two other physicians must run realistic parent scenarios through the system and review every AI-generated clinical impression
-- Override rate tracking must be active from day one of testing — if the physician overrides more than ~20% of impressions, the system is not ready for production
-- The emergency detection logic (both symptom-based and result-based) must be stress-tested with ambiguous inputs — cases that are close to but not clearly emergencies
-- Image analysis (Category B) accuracy must be reviewed against real dermatology and trauma photos, not stock images
-- A formal sign-off from Martin on accuracy acceptability is required before go-live — this should be documented and kept on file
-
-This is a shared responsibility. We build the safeguards; Martin validates that they work in the clinical context he understands and we do not.
+**Critical lab value thresholds** follow the same principle — Martin defines the specific numeric boundaries that trigger the emergency pathway. These are resolved in Discovery (item D008).
 
 ---
 
-### Risk Register Additions
+### Testing Requirements — Martin's Participation is Mandatory
+
+AI accuracy in a clinical context cannot be validated in a lab. Martin's active testing participation is a project requirement and a go-live gate.
+
+- UAT: Martin runs realistic parent scenarios through the system — including ambiguous cases near but not clearly at the emergency threshold
+- Override rate tracking active from day one of testing
+- Go-live gate: override rate must be below ~15–20% sustained across a meaningful sample
+- Emergency detection stress-tested with ambiguous inputs — the hardest cases, not the obvious ones
+- Image analysis (Category B) tested against real clinical photos, not stock images
+- **Formal written sign-off from Martin on accuracy acceptability is required before go-live** — documented, retained on file, referenced in the engagement letter
+
+This is shared responsibility: Learned Geek builds the safeguards; Martin validates they work in the clinical context he understands and we do not.
+
+---
+
+### Risk Register — Authenticity Boundary
 
 | Risk | Likelihood | Impact | Mitigation |
 |---|---|---|---|
-| AI confabulates product information not in knowledge base | Medium | High | Confidence thresholding + citation enforcement + escalation path |
-| AI generates clinical impression with no supporting PubMed evidence | Medium | Very High | RAG fallback + null impresion_dx + physician VoBo mandatory |
-| AI misapplies retrieved PubMed abstracts to wrong clinical context | Medium | High | PMID attribution enforcement + low temperature + physician override tracking |
+| AI confabulates clinical impression with no supporting PubMed evidence | Medium | Very High | Gate 1: retrieval confidence threshold + null response path |
+| AI misapplies retrieved abstracts — wrong clinical context | Medium | High | Gate 1: citation enforcement + PMID attribution verification |
+| Emergency detection failure — Tier 3 | Low | Catastrophic | Deterministic keyword matching; LLM excluded from emergency pathway; over-inclusive by design |
+| Critical lab value misread as normal | Low | Catastrophic | Same deterministic pathway; Martin defines numeric thresholds in Discovery |
+| Physician overtrusts AI impression after repeated accuracy — stops critically reviewing | Medium | High | Override rate tracking; VoBo UX designed to require active review, not passive approval |
+| AI confabulates product information (Workstream A) | Medium | High | Confidence thresholding + citation enforcement + escalation path |
 | Category B image analysis inaccurate in real clinical photos | Medium | High | Mandatory disclaimer + physician always reviews + UAT with real images |
-| Accuracy not validated before go-live | Low | Very High | Formal physician sign-off required as go-live gate |
+| Override rate not tracked before go-live | Low | Very High | Override tracking is a Phase 3 build requirement, not a Phase 4 add-on |
+| Martin does not participate in UAT | Low | Very High | Engagement letter: UAT participation is a contractual obligation, not a courtesy |
 
 ---
 
