@@ -39,7 +39,7 @@ For the Operating Agreement, MSA, NDA, and Internship Agreement — Erika's gut-
 | 16 | Draft DPA | Claude | ✅ Done | drok-engagement/DPA-DROK.md (Annex A SCCs pending Carlos) |
 | 17 | Formal attorney review of final DrOk agreement | Mark | ❌ Pending | Budget $250–500 |
 | 18 | Check Anthropic AUP for medical use | Mark | ✅ Done 2026-03-23 | Medical use permitted with disclaimers; no diagnostic claims. Added to technical spec. |
-| 19 | Check Twilio AUP for health data | Mark | ❌ Pending | |
+| 19 | Check Twilio AUP for health data | Mark | ✅ Done 2026-03-24 | No healthcare restrictions. Compliance burden on customer. Need separate DPA/security review. |
 | 20 | Check Anthropic BAA availability | Mark | ❌ Pending | |
 | 21 | Check Twilio BAA availability | Mark | ❌ Pending | |
 
@@ -52,9 +52,9 @@ For the Operating Agreement, MSA, NDA, and Internship Agreement — Erika's gut-
 | 24 | Update Internship Agreement: add access termination | Claude | ✅ Done | templates/INTERNSHIP-AGREEMENT.md §7.3 |
 | 25 | Fill in dates/hours in Internship Agreement | Claude | ✅ Done | June 8 – July 31, 72–144 hrs, 18 hrs/week |
 | 26 | Create Intern NDA | Claude | ✅ Done | intern-engagement/NDA-INTERN.md |
-| 27 | Create Intern SOW / Scope Document | Claude | ❌ Pending | Defines exactly what intern works on |
+| 27 | Create Intern SOW / Scope Document | Claude | ✅ Done | docs/intern/INTERN-SOW.md — 3 phases, 12 deliverables |
 | 28 | Obtain WCTC Training Agreement from Ellen | Mark | ❌ Pending | Required by program before start |
-| 29 | Create SMART Goals template | Claude | ❌ Pending | 3–5 goals, per WCTC requirement |
+| 29 | Create SMART Goals template | Claude | ✅ Done | docs/intern/SMART-GOALS-TEMPLATE.md — 5 goals |
 | 30 | Set up GitHub Project board for intern tracking | Mark/Claude | ❌ Pending | Issues, milestones, hour tracking fields |
 | 31 | Create Independent Contractor Agreement template | Claude | ✅ Done | intern-engagement/INDEPENDENT-CONTRACTOR-AGREEMENT.md |
 | 32 | Send Erika Internship Agreement for gut check | Mark | ❌ Pending | After updates complete |
