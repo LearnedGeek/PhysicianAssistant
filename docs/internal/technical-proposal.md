@@ -2,7 +2,7 @@
 ## Learned Geek — Working Document
 
 **Prepared by:** Mark McArthey  
-**Date:** March 17, 2026 (rev 3 — Martin's legal analysis incorporated, 2026-03-23)
+**Date:** March 17, 2026 (rev 4 — ANI confabulation architecture applied, stack consistency, 2026-03-24)
 **Status:** Internal only — do not share with client  
 **Purpose:** Full technical reference, architecture decisions, resolved questions, risk assessment, and pricing framework for the Infanzia engagement
 
@@ -199,6 +199,18 @@ Mandatory opening message (every new WhatsApp conversation):
 This must be the first message sent in every new conversation thread. It is a hard compliance requirement — not a recommendation.
 
 **Source:** https://www.anthropic.com/legal/aup — High-Risk Use Cases section
+
+### Twilio AUP — Healthcare Use (Reviewed 2026-03-24)
+
+Twilio's Acceptable Use Policy does **not contain healthcare-specific prohibitions or restrictions.** There is no mention of HIPAA, PHI, medical data, or regulated health use cases in the AUP itself.
+
+The relevant provision is the **Data Safeguards** clause: *"Customer is responsible for determining whether the Services offer appropriate safeguards for Customer's use of the Services, including, but not limited to, any safeguards required by applicable law or regulation, prior to transmitting or processing, or prior to permitting End Users to transmit or process, any data or communications via the Services."*
+
+**What this means for us:** Twilio does not block healthcare use, but places the compliance burden entirely on the customer. For Peru (Ley 29733) and any future US expansion (HIPAA), we must independently verify that Twilio's infrastructure meets applicable data protection requirements. This is consistent with the SCC requirement already identified in the risk register — Twilio is a US-based sub-processor of Peruvian personal health data.
+
+**Action:** Review Twilio's Data Protection Addendum and Security documentation separately for specific safeguards. The AUP alone is not a blocker.
+
+**Source:** https://www.twilio.com/en-us/legal/aup
 
 ---
 
@@ -400,6 +412,8 @@ physicians (
 
 **This is the most important architectural consideration in the project.** The root cause is well understood and named: **smoothness over truth** — the LLM will generate confident, plausible-sounding output to maintain conversational flow even when its evidence is insufficient to support it. In a pediatric triage system, this failure mode is not acceptable at any tier. The architecture must make confabulation structurally difficult, not merely discouraged by instruction.
 
+**Key insight from ANI Runtime (March 2026):** Both projects discovered the same principle from opposite directions. ANI started with a working model, added complexity to prevent confabulation, and discovered the complexity caused the failures. DrOk has the advantage of designing the architecture before deployment — building the right constraints from the start without first building and then dismantling layers of prompt-based guardrails. The unifying principle: **architecture over instruction.** Control what the model sees, not what it does with what it sees. If the context is right, the model will be right. If the context is wrong, no amount of instruction will save it.
+
 Client-facing explanation: see `docs/client/authenticity-boundary-en.md`
 
 ---
@@ -421,20 +435,22 @@ Confabulation risk is tiered by consequence. The mitigations are calibrated to t
 
 ### The Two-Gate System (Tiers 1 and 2)
 
-**Gate 1 — Evidence Gate (pre-physician)**
+**Gate 1 — Evidence Gate (pre-physician) — Primary confabulation defense**
 
-**Architectural principle (validated by ANI Runtime production debugging, March 2026):**
-**Architecture over instruction.** Control what the model sees, not what it does with what it sees. Adding anti-confabulation instructions to the prompt consumes Claude's attention budget and competes with its trained honest-uncertainty behavior — producing robotic, parroting output rather than better reasoning. The fix is upstream: control what reaches the model.
+**Architectural principle (validated by ANI Runtime production debugging, March 17–23, 2026):**
+**Architecture over instruction.** Control what the model sees, not what it does with what it sees. The ANI Runtime project spent six days building increasingly sophisticated anti-confabulation systems (confidence floors, source attribution verification, topic-mismatch detection, null-result prompt injection, charming-dishonesty detection, claim extraction, contradiction detection — seven distinct systems). Every one made the model measurably worse. The pipeline was the disease, not the cure. The same 7B model that naturally said "I don't think we've talked about that" in a clean session produced robotic, parroting output through the full guardrail stack.
+
+The root cause: every instruction, warning, and injected guardrail competes for the model's context window attention. Anti-confabulation instructions consume Claude's attention budget and compete with its trained honest-uncertainty behavior. The fix is upstream: control what reaches the model, not what it does with what it sees. Post-generation verification (re-generation, attribution checking) is worse than the original — if you need it as a primary mechanism, your retrieval pipeline failed upstream.
 
 See: `docs/internal/ANI-Cross-Project-Insight-Confabulation.md`
 
-Operates in sequence before any clinical impression reaches the physician queue:
+**Gate 1 uses retrieval confidence as its primary mechanism, not post-generation verification.** Operates in sequence before any clinical impression reaches the physician queue:
 
-1. **Retrieval confidence floor — the most important gate.**
-PubMed results are scored for semantic relevance. Start conservative: threshold 0.65+. At lower thresholds, tangentially related abstracts pass and the model incorporates them regardless of warning instructions. When nothing passes the threshold, inject nothing — do not retrieve-then-warn. A null impression queued for physician review is always better than a confident fabrication. Lower the threshold only after retrieval quality is validated in production.
+1. **Retrieval confidence floor — the single most important gate.**
+PubMed results are scored for semantic relevance. ANI Runtime empirical findings: at 0.55 cosine similarity, retrieval was essentially random garbage; at 0.60, garbage was filtered; at 0.65+, only genuinely relevant results survived. Start conservative: threshold 0.60 minimum, 0.65+ recommended. At lower thresholds, tangentially related abstracts pass and the model incorporates them regardless of warning instructions — because that is what models do with context. When nothing passes the threshold, inject nothing — do not retrieve-then-warn. The model's trained honest-uncertainty register activates naturally when given no evidence. A null impression queued for physician review is always better than a confident fabrication. Lower the threshold only after retrieval quality is validated in production.
 
-2. **Schema-first null response — honesty as the default state.**
-The output schema is structured so that `evidence_sufficient: false` is the default. The model must actively justify `true` with citations. Do NOT instruct Claude to say "insufficient evidence" — it was trained to express honest uncertainty naturally. Instruction competes with trained behavior and produces rule-following robotic output instead. Let the schema enforce the behavior.
+2. **Schema-first null response — null is the default, not the exception.**
+The output schema is structured so that `evidence_sufficient: false` and `impresion_dx: null` are the schema defaults. The model must actively justify `evidence_sufficient: true` with citations — not the other way around. This was the ANI project's biggest lesson: treating "no relevant data found" as an edge case that needed special handling (60-word null-result instructions) told the model to do what it was already trained to do — and consumed attention budget doing it. Do NOT instruct Claude to say "insufficient evidence" — it was trained to express honest uncertainty naturally. Instruction competes with trained behavior and produces rule-following robotic output instead. Make honesty the path of least resistance through schema design.
 
 ```json
 {
@@ -459,10 +475,10 @@ The output schema is structured so that `evidence_sufficient: false` is the defa
 If `evidence_sufficient` is false or `sources` is empty — the impression field is null in the physician queue. No post-generation re-generation. The retrieval floor is the fix, not a downstream recovery step.
 
 3. **Low-temperature generation — empirically validated.**
-Temperature 0.2–0.3 for clinical impression generation. Validated by ANI Runtime production testing. Trades fluency for factual conservatism. Do not raise for clinical output.
+Temperature 0.2–0.3 for clinical impression generation. Validated by ANI Runtime production testing (March 2026): temperature splitting (0.3 for grounded replies, 0.7 for creative) was one of the few pipeline features that actually improved output quality. Lower temperature reduces the model's tendency to "reach" for plausible completions. Trades fluency for factual conservatism. Do not raise temperature for clinical output.
 
-4. **Lean system prompt — fewer competing instructions.**
-The system prompt for clinical impression generation should be as short as possible. Every added instruction consumes attention budget. Claude's trained behavior handles honest uncertainty — do not re-instruct it. Add only what is architecturally necessary and not already in the output schema.
+4. **Minimal system prompt — do not stack anti-confabulation instructions.**
+The system prompt for clinical impression generation must be as short as possible. This is not a style preference — it is an empirically validated architectural constraint. The ANI Runtime tested a system prompt with 15 behavioral rules, 5–11 retrieved memories (many irrelevant), plus anti-confabulation instructions, topic-mismatch warnings, contradiction warnings, and claim verification data. The model spent its attention budget navigating instructions instead of reasoning. It defaulted to the safest strategy: parrot the user's words back. In a medical context, an over-instructed clinical impression prompt produces lower-quality reasoning than a clean prompt with well-curated context. Claude's trained behavior handles honest uncertainty — do not re-instruct it. Add only what is architecturally necessary and not already enforced by the output schema.
 
 **Gate 2 — Physician Gate (VoBo)**
 
@@ -484,9 +500,11 @@ Same two-gate principle applies at lower stakes:
 
 ---
 
-### Emergency Pathway — Separate Architecture, Zero LLM Latitude
+### Emergency Pathway — Deterministic, Zero LLM Involvement
 
-The emergency detection pathway operates under fundamentally different rules. **The LLM has no creative latitude here.**
+The emergency detection pathway is entirely deterministic: keyword matching + numeric threshold comparison. **No LLM judgment is involved at any point in the emergency detection chain.** This is not a guardrail on the LLM — the LLM is excluded entirely.
+
+**ANI Runtime validation:** The ANI project arrived at the same principle independently for their coherence gate on outreach messages: when the cost of a false negative is categorically different from the cost of a false positive, remove LLM judgment from the critical path entirely. (See `docs/internal/ANI-Cross-Project-Insight-Confabulation.md`, Section 5.)
 
 **Design principle: over-inclusive, not precise.**
 A false positive (non-emergency escalated to ER) is an inconvenience.
@@ -494,8 +512,8 @@ A false negative (real emergency routed as routine) is the catastrophic Tier 3 s
 When in doubt, the system escalates. Every time. There is no "probably not an emergency" path.
 
 **Implementation:**
-- Emergency keyword matching runs **before** any retrieval or impression generation
-- Matching is deterministic — keyword list, not LLM judgment
+- Emergency keyword matching runs **before** any retrieval or impression generation — the LLM never sees the conversation if the emergency pathway fires
+- Matching is deterministic — keyword list + numeric threshold, not LLM judgment
 - On match: hardcoded response fires immediately:
   > *"Lo que describes suena como una emergencia médica. Por favor llame al 112 / vaya a urgencias AHORA. No espere la respuesta del médico."*
 - Claude does not write or modify this message under any circumstances
@@ -654,7 +672,7 @@ Martin's Q4 response reveals he is already thinking about this as a platform: B2
 - [ ] Register free NCBI API key: ncbi.nlm.nih.gov/account (2 min)
 - [ ] Review Anthropic Acceptable Use Policy for medical/clinical restrictions
 - [ ] Review Meta/WhatsApp Business Policy for health data messaging restrictions
-- [ ] Review Twilio policies for medical use
+- [x] Review Twilio policies for medical use — AUP reviewed 2026-03-24; no healthcare-specific prohibitions; customer responsible for determining regulatory compliance (see note below)
 - [ ] Get E&O / professional liability / cyber liability insurance quotes — no current policy beyond LLC
 - [ ] Prepare tiered scope options (full vs lean MVP) for budget conversation
 - [ ] Update POC to include Category B vision model test + lab value parsing
