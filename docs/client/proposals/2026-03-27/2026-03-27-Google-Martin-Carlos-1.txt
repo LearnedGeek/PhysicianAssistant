@@ -1,0 +1,80 @@
+[0:00:00 - 0:00:20] Pretty good. Good. How are you? How are you today? Doing good, how are you. Did you work a lot today? Yes, well just take a few minutes for waiting for Carlos please and then continue.
+[0:00:30 - 0:01:00] Ah okay, it's just starting to change. It's still hot, it is still sunny, but it is already beginning and it is starting to change. Yes, we are already changing seasons. But well, how about everything at home? All right? Yes, yes, all right, happily. We are without my daughter. My daughter has gone to what is her name? Alabama. Alabama. Alabama. Uh-huh. Yeah, she went to Orange.
+[0:01:00 - 0:01:05] Beach. Excellent.
+[0:01:27 - 0:01:31] How many hours? 15. 15 hours. 15 Hours. It's been 15 hours? Yes, it has been 15 HOURS.
+[0:01:33 - 0:02:02] Ah, with a family of friends. Okay. Yes, 15 hours. But she is happy with her friends. Like me. Mine are small, mine are still small, they have 10 and 7. Oh, they're still little. I thought they were bigger. 10 and 7 if they are still young. Yes, my kids are still little but well, big problems, but well big problems.
+[0:02:03 - 0:02:32] Big, big children, they say. Ah, but yes, well men are calmer. Well. Yes, no, yes they are. On the other hand, women grow up and we complicate ourselves a lot. They mature faster, that's the thing. But hey, give me a minute, I'm going to, Carlos confirmed that he was going to make the call. I'll call him so you can join. Give me one minute, please. Okay.
+[0:02:32 - 0:02:44] Hello, Carlos. Oh, there we go. Hola, hola, como estas? Let me introduce.
+[0:02:46 - 0:03:16] Carlos is a friend, he's a lawyer, he's an expert in new technologies and develop new projects not only in health but also in different kind of services. Mark is the husband of one of my best friends for my childhoods. Karen. Hola. The life put on, put together again nos puso nuevamente juntos
+[0:03:16 - 0:03:45] Karen habla bastante bien Bueno, Mark habla entiende bastante el castellano para hablar es un poco más difícil pero Karen nos hace el apoyo para poder entendernos y que la traducción no sea literal sino de acuerdo al entendimiento de lo que representa. Entonces, nada, no sé si quieren
+[0:03:45 - 0:03:57] presentarse ustedes también con todo gusto. Carlitos Mark. I am Carlos and a lawyer but now I'm working in innovation
+[0:03:59 - 0:04:19] in the film with 15 years friend for Martin I don't remember many years pero somos amigos de muchos años
+[0:04:21 - 0:04:51] y nada, muchas gracias por estar acá y por la reunión thank you for the meeting y ya estuve revisando tus preguntas le envié a Martin un borrador bueno dos ahorita me acaba de mandar otro y algunos puntos tenemos que analizar para la viabilidad
+[0:04:51 - 0:05:21] y el flujo de lo que implica el proyecto así que nada, Martin tú dime cómo quieres llevar la reunión We can pass through the questions so we can check all the options we have in every point Today we have a group so we develop different things
+[0:05:21 - 0:05:51] in the areas Mark is specific in IT, computer artificial intelligence Carlos is lawyer in the legal part and as a physician I can contribute with all my knowledge So the first question is about ok legal issues
+[0:05:51 - 0:06:17] specifically for legal issues so since we manage personal information we need to have different kind of accountabilities liability and accountability
+[0:06:19 - 0:06:48] let him know that they broke for a second ok I'll add un marco let them know that they paused you sabes que se congeló por un segundo perdimos un poquito de lo que estabas diciendo ok we were talking about the accountability
+[0:06:48 - 0:07:17] around personal information explain a little more and I can contribute with my experience and my research during these days perfect si tenemos una autoridad we have a authority of protection personal data group the information which required
+[0:07:17 - 0:07:47] persons personas mayores o menores we have a register it's a simple registration you fill out a form where you will inform how are you going to use the data that you ask people through the platform
+[0:07:47 - 0:08:15] what do you ask for and store processes guards registrar tengo esta base de datos half of this database segundo I'm assuming it's this here that they were saying yes all the database which one
+[0:08:15 - 0:08:17] registro nacional
+[0:08:20 - 0:08:48] no other register ok de los clientes no si it does that clients all the database of their clients ok and all the information they have about them yeah I understand but specifically in our countries quite difficult because in this case is specifically for personal information ok
+[0:08:48 - 0:09:05] igual voy a ir colocando información que le iba mandando a Martin para que lo vayan lo puedo ir leyendo también si quieres Mark ok
+[0:09:07 - 0:09:21] entonces un registro donde además tienes a un encargado el encargado del tratamiento es decir quien se beneficia del uso de esta información para ejecutar un servicio
+[0:09:23 - 0:09:53] en este caso in this case Martin or the enterprise he uses to give the service if I'm offered a service is a is a data controller ok he's a data control and the providers for example technology provider is only a data processor
+[0:09:53 - 0:10:21] it's you only solo tienes que decir en el formulario voy other personas to use the data to give a service is a data processors see yeah I already did this here so ok
+[0:10:21 - 0:10:51] when the service providers is the AI provider and this group that sends the message yes all of the companies use the data but not benefits directly all that enterprise uses is a data processors
+[0:10:51 - 0:11:20] ok when the data fly in the system for our country the authority requirement where the data goes you say it goes to the United States Europe depends of that technology
+[0:11:20 - 0:11:50] to use ok yeah different different laws and different authorities yes so different mechanisms different so I I don't know how to say it I've already researched I don't
+[0:11:50 - 0:12:16] know the word but research which word I have researched I don't know what for research yeah I don't know what you say though they have
+[0:12:20 - 0:12:50] in Spanish but basically they have authorizations they they have user agreements is what they're called authorized user agreements or yeah so I I already looked the AUP for
+[0:12:50 - 0:13:20] rules laws and health care okay and it's all good no there's no problems you only check data and yeah and the authority in Peru say okay Martin you are
+[0:13:20 - 0:13:50] a controller you have this controllers and your the you have the responsibility okay you have to do that and you have to do that okay
+[0:13:50 - 0:14:19] so I think it's a very important thing in the legal age because there are many people who don't know what they need to do in the system and
+[0:14:19 - 0:14:49] you can read the consent demand and say okay I okay so only one parent yeah okay yes in the practice is what I have is
+[0:14:49 - 0:15:19] do both parents have full authority to override the other parent you know what I mean like if you were to request data or to be removed or to be deleted
+[0:15:19 - 0:15:49] both have the option or only the one that is going to be registered no both okay yes that's important right because they both have you can ask for the express
+[0:15:49 - 0:16:18] consent to one now how is digital and it would have to see the most appropriate way of demanding that requirement either through a click or through a click
+[0:16:18 - 0:16:47] on the button and then you have to do it in your own way so that is very important for all of us we need to have all
+[0:16:47 - 0:17:13] the information we cannot delete in the other hand they can suggest not share the information it's totally different but we cannot delete the information
+[0:17:16 - 0:17:46] because we have the responsibility in front of personal data that at a personal level but at health sector regulation we need to register as agents who control register store clinical
+[0:17:46 - 0:18:16] history of their patients in simple we have to say that we manage clinical histories and register ourselves before the ministry of health
+[0:18:16 - 0:18:46] sorry yes I heard you well we need to have I don't know how you can say it in English is we need to have and our responsibility is to
+[0:18:46 - 0:19:16] trace information yes okay see in in how do I say in my opinion solo podemos guardar los datos brutos the raw y todo we say metadata i don't
+[0:19:16 - 0:19:30] know how you say that transparency transparidad y transparencia tras transparencia y todo no
+[0:19:32 - 0:19:58] los datos no cambia nada we don't la sistema never change nunca cambie it never changes the data do you know what I'm saying let's just say this is the system never changes the information in that ai provides is
+[0:20:00 - 0:20:30] what do we want to say transformed for the patient for the message but the raw data is always saved does that make sense what is your ah i forgot the word in
+[0:20:30 - 0:21:00] spanish to answer yes change yeah in the end we only give an advice see this here this is a big this moment okay d-i-g-e this here
+[0:21:02 - 0:21:32] g it's a it's carlos viste eso de digimet quieres saber yeah under that classification un clasificación de este programa if it's considered
+[0:21:32 - 0:22:02] medical is considerado como es considerado una aparato de ya un dispositivo médico dispositivo medico yo tengo cosas que los abogados no tienen una respuesta única hay una ley de telemedicina
+[0:22:02 - 0:22:32] que implica ciertas limitaciones al amor a la información que das a través de sistemas automatizados donde tienes que ser más el envío de notificaciones administrativas porque al final es un médico y te da un diagnóstico y una respuesta pero yo creo no estamos ante un dispositivo médico no estamos ante
+[0:22:32 - 0:23:02] un dispositivo de medicina pero igual yo preferiría pensar que necesitamos ese registro porque a diferencia la autoridad de datos es muy rápida y trabaja bien y suele ser una autoridad un poquito
+[0:23:02 - 0:23:32] más lenta y ahí martín por eso te comentaba tenías un contacto en una clínica específica para descartar que estemos en el ámbito de esa norma yo entiendo por lo que martin hemos conversado sobre la plataforma no estamos ante ese supuesto pero igual yo creo que no estamos en
+[0:23:32 - 0:24:02] una clínica de datos y eso es muy importante para la información del paciente pero si el paciente tiene un dispositivo de medicina entonces el paciente no tiene un dispositivo médico
+[0:24:02 - 0:24:31] porque la programa es diagnóstico no es una ¿es eso un problema? ¿tiene que ser un diagnóstica médica clasificación de medicina si nosotros ofrecemos solo un consejo porque
+[0:24:31 - 0:25:01] nosotros ofrecemos sólo un consejo no es necesario ser un tratador de médicos es para los pacientes pero al final tenemos uno de los puntos en todo el flujo es una audición así que la enfermera puede estar segura de que todo el proceso
+[0:25:01 - 0:25:15] es bueno toda la información está bien pero también para entrenar a la inteligencia artificial por supuesto si sí entiendo sí
+[0:25:17 - 0:25:47] sí el entrenamiento del aplicativo tengo investigación sobre lo que llamo la autenticidad de las respuestas y es un problema en IA artificial inteligencia es un gran problema en
+[0:25:47 - 0:26:17] the industry no quiero decir industria si por terapia for health care y ya so es todo si yo he investigado por hace seis meses este problema creo que tengo
+[0:26:17 - 0:26:47] una una I don't know how to say have a solution una solución y es muy difícil pero creo que tengo una solución si okay hasta las septiembre de el año pasado he investigado so por otra otra
+[0:26:47 - 0:27:17] solucion otro programa y las programas IA no quiere decir yo quiere decir quiero dar una respuesta sin consecuencias si y por eso yo tengo un what do I
+[0:27:17 - 0:27:46] say yo quiero que la repuesta be conservative más conservativo ¿cómo diría conservativo? más conservativo de las respuestas y todos los respuestas tiene que un documento referir I don't know Karen
+[0:27:46 - 0:27:59] you're going to help me here ID identificación de documentos por eso si usamos PubMed
+[0:28:01 - 0:28:31] sí yes no PubMed ya sí todas las respuestas tiene una identificación de PubMed y entonces tenemos más confianza de las respuestas but also the informed consent is our backup
+[0:28:31 - 0:29:00] to track this kind of information okay si en los Estados Unidos tenemos un I guess what I'm going to ask Karen is there a problem with the data being transferred between Peru and the United States on
+[0:29:00 - 0:29:30] the system level okay I did the research about that so the information need to have traceability so look at only traceability because we are not lost in favor or en contra a favor
+[0:29:30 - 0:30:00] o we only need to have traceability okay for porque Microsoft no sé en español Microsoft yeah Microsoft ya hay sistemas and well todo el mundo todo sistemas y computadores the cloud no sé in
+[0:30:00 - 0:30:15] cloud in Brazil okay sí so if it's a problem si hay un problema tenemos opciones yes ahí está tú ay perdón
+[0:30:18 - 0:30:20] es que no los conozco
+[0:30:32 - 0:31:02] yes it's important the traceability of information and the conditional of the recommendation you know because one is the AI and one is the doctor it's different for the view and the responsibility
+[0:31:02 - 0:31:31] is a little bit more complicated and it's a lot of things that you have to do in the world so
+[0:31:31 - 0:32:00] I don't know if there are any other questions about this data because this is the that's why I asked Martin about if we are obligated to register as a manager
+[0:32:00 - 0:32:28] of clinical stories or not because according to that we will have responsibility okay martín there I don't know if we would like to have the more strict process and we need to
+[0:32:29 - 0:32:59] preserve the information for five years so I don't think that this is going to be a problem for five years in our countries for five years in case of
+[0:32:59 - 0:33:29] electronic records in case of manual records it's 20 years but 20 but in our case it's not necessary to print the information just in digital but I
+[0:33:29 - 0:33:58] think we are not in that specific point of the law so yes just to do that I don't know how you handle your stories no no
+[0:33:58 - 0:34:28] not necessary as we are not going to be regulated by the Ministry of Health we do not but the clinical electronic history in Peru does not contemplate it so it is not
+[0:34:28 - 0:34:58] mandatory to be able to maintain delete and everything else of course because the information of Apple Watch is a personal information of the health department that records and when you register
+[0:34:58 - 0:35:28] this report it saves a format yes but sorry I say this in Spanish today Apple Watch has scientific information that is not considered as part of the medical electronic history
+[0:35:28 - 0:35:58] because a doctor who is on the platform asks the patient for some kind of test in the test and that information he will get from Martin or Tomás for example blood tests
+[0:35:58 - 0:36:20] or radiography or any information this person has is going to send it up to the platform because they are talking about the

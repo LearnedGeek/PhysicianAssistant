@@ -1,0 +1,36 @@
+2026-03-27
+Martin y Carlos Rojas Klauer
+
+personal info
+- liability/accountability
+
+legal protection personal data
+
+carlos rojas klauer
+3:11 PM
+1.1 — Legal Counsel (Data Privacy in Peru)
+
+Registration with the National Authority for the Protection of Personal Data (ANPDP)
+
+The system will store longitudinal pediatric health records, which constitutes a sensitive personal data bank. Under Law No. 29733 and its Regulations (Supreme Decree No. 016-2024-JUS), every personal data bank must be registered with the National Registry for the Protection of Personal Data. The registration must include purposes, data categories, security measures, recipients, and, if applicable, cross-border data flows.
+
+Regarding who registers: the data controller (in principle, Dr. Núñez or the clinical entity that determines the purpose and content of the data bank) is the party required to register the data bank. Learned Geek LLC, as the technology provider processing data on behalf of the controller, qualifies as a data processor and is not required to register its own data bank, but a data processing agreement must exist that defines purposes, security measures, prohibition of unauthorized uses, sub-processor regime, and obligations regarding return or destruction of data upon termination of the service. If Learned Geek stores data on its infrastructure, this does not make it a controller, but it does trigger additional cross-border data flow obligations that must be documented.
+
+Martin controller
+
+cannot change the records
+- raw data
+- no update
+
+informed consent
+
+the data only needs traceability
+data retention
+20 years physical records
+no  tenemos que primir
+
+benefit to medical device or not?
+
+Carlos
+Mi WSP + 51 940 247 601
+si quieren hacemos un chat

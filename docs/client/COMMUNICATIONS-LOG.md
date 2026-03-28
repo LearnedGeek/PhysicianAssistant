@@ -10,6 +10,8 @@ Chronological record of all client-facing communications, responses, and notable
 |---|---|---|
 | Martín Núñez | Client / Pediatrician | tyrmanb@gmail.com, martin.nunez@schweringmbh-lab.com |
 | Carlos Rojas | Legal / New Technology Specialist (Rebaza, Alcázar & De Las Casas) | carlos.rojas@rebaza-alcazar.com |
+| Mark McArthey | Learned Geek LLC | markm@learnedgeek.com |
+| Karen McArthey | Translation Support | medinakaren4@gmail.com |
 | Independent counsel (informal) | Legal / Corporate & International Business Law (Estudio Muñiz) | TBD |
 
 ---
@@ -75,5 +77,56 @@ Sent pre-Discovery action items document covering legal, regulatory, operational
 - Carlos Rojas confirmed actively working — not just filed
 - Martin is personally following up with him
 - No timeline given — hold on pushing for Discovery call until Carlos's responses arrive
+
+---
+
+## 2026-03-27 — WhatsApp — Carlos Has Questions, Proposes Group Call
+
+**Channel:** WhatsApp
+**From:** Martín
+**Time:** 5:32 PM
+
+> Hola Mark. Carlos esta de vacaciones esta semana, igual ya lo revisó, pero tiene algunas dudas... lo conversamos y probablemente podemos hacer una conferencia todos para estar alineados.
+
+**Mark's response (6:42 PM):**
+> Perfecto, muchas gracias Martin. Me da gusto que Carlos ya lo haya revisado. Quedo listo para la conferencia cuando Carlos regrese de vacaciones. Solo avísame fechas y horarios que les funcionen.
+
+**Martin's response (6:43 PM):** Ayrton Senna celebration GIF + "Gracias"
+
+**Follow-up exchange (6:55 PM):** Casual F1 conversation. Martin: "Jajajaja; por aca todos super fanáticos (fierreros). Un fuerte abrazo." — followed by Michael Schumacher image.
+
+**Key takeaways:**
+- Carlos reviewed the documents during vacation — he's engaged
+- "Dudas" = questions/clarification points, not objections
+- Martin proposed the group call — not Mark pushing
+- Rapport is strong — personal warmth in the exchange
+
+---
+
+## 2026-03-27 — Google Meet — Discovery Alignment Call
+
+**Channel:** Google Meet (~35 minutes)
+**Attendees:** Mark McArthey, Martin Nunez, Carlos Rojas Klauer, Karen McArthey (translation)
+**Recording:** 2 MP3 files + Otter.ai transcripts in docs/client/proposals/2026-03-27/
+
+**Key decisions:**
+- Martin = data controller; Learned Geek = data processor (Carlos confirmed)
+- One parent consent sufficient in practice
+- Medical records cannot be deleted — only blocked; raw data preserved
+- Cross-border transfer: traceability required (simpler than Martin's written analysis suggested)
+- DIGEMID: gray area, not MVP blocker, strategic benefit to register long-term
+- AI provides advice only; physician bears clinical responsibility
+- DrOk not yet trademarked — Martin acknowledged needs to do it
+- MVP target ~July 2026; Martin can provide 50-100 physicians for testing
+- Carlos gave WhatsApp (+51 940 247 601), proposed group chat
+
+**New contact established:**
+- Carlos Rojas Klauer — innovation/technology law, 15+ year friend of Martin
+- WhatsApp: +51 940 247 601
+- Will communicate directly with Mark (not only through Martin)
+
+**Action items:** See docs/client/proposals/2026-03-27/2026-03-27-project-tracker-shared.md
+
+**Full summary:** See docs/client/proposals/2026-03-27/2026-03-27-meeting-summary-EN.md
 
 ---
