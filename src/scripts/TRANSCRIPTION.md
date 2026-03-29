@@ -58,3 +58,4 @@ mp3, wav, m4a, flac, ogg, webm — anything ffmpeg can read.
 - **Otter.AI:** Struggles with Spanish/English switching. Cloud-based (privacy concern for medical).
 - **Whisper large-v3:** Handles code-switching well. Runs locally. Free. Private.
 - **Deepgram:** Better for real-time streaming (ANI voice). Whisper is better for batch transcription.
+
