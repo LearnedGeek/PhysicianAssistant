@@ -1,6 +1,5 @@
 namespace PhysicianAssistant.Services;
 
-public interface ITriageService
+public interface ITriageService : IMessageService
 {
-    Task<string> ProcessMessageAsync(string phoneNumber, string message, CancellationToken cancellationToken = default);
 }

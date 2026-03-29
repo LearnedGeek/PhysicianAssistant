@@ -10,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.Configure<ClaudeSettings>(builder.Configuration.GetSection(ClaudeSettings.SectionName));
 builder.Services.Configure<PubMedSettings>(builder.Configuration.GetSection(PubMedSettings.SectionName));
 builder.Services.Configure<ConversationSettings>(builder.Configuration.GetSection(ConversationSettings.SectionName));
+builder.Services.Configure<RoutingSettings>(builder.Configuration.GetSection(RoutingSettings.SectionName));
 
 // Polly policies for Claude API
 var claudeSettings = builder.Configuration.GetSection(ClaudeSettings.SectionName).Get<ClaudeSettings>() ?? new ClaudeSettings();
@@ -45,6 +46,7 @@ builder.Services.AddHttpClient<IPubMedService, PubMedService>()
 // Register services
 builder.Services.AddSingleton<IConversationService, FileConversationService>();
 builder.Services.AddScoped<ITriageService, TriageService>();
+builder.Services.AddScoped<LearnedGeekService>();
 
 var app = builder.Build();
 
@@ -52,26 +54,55 @@ var app = builder.Build();
 app.MapGet("/health", () => Results.Ok(new
 {
     status = "healthy",
-    service = "PhysicianAssistant Triage POC",
+    service = "Learned Geek Platform",
     timestamp = DateTime.UtcNow
 }));
 
-// Triage webhook — Twilio WhatsApp messages arrive here
-app.MapPost("/sms", async (HttpRequest request, ITriageService triageService, ILogger<Program> logger) =>
+// Unified webhook — routes to the correct service based on the Twilio "To" number
+app.MapPost("/sms", async (
+    HttpRequest request,
+    ITriageService triageService,
+    LearnedGeekService learnedGeekService,
+    Microsoft.Extensions.Options.IOptions<RoutingSettings> routingOptions,
+    ILogger<Program> logger) =>
 {
     var form = await request.ReadFormAsync();
     var incomingMessage = form["Body"].ToString();
     var fromNumber = form["From"].ToString();
+    var toNumber = form["To"].ToString();
 
-    logger.LogInformation("WhatsApp message from {Number}: {Message}", fromNumber, incomingMessage);
+    // Determine which service handles this number
+    var routing = routingOptions.Value;
+    var serviceName = routing.DefaultService;
 
-    var responseText = await triageService.ProcessMessageAsync(fromNumber, incomingMessage);
+    // Check if the To number maps to a specific service
+    foreach (var mapping in routing.NumberToService)
+    {
+        if (toNumber.Contains(mapping.Key))
+        {
+            serviceName = mapping.Value;
+            break;
+        }
+    }
+
+    logger.LogInformation("[{Service}] Message from {From} to {To}: {Message}",
+        serviceName, fromNumber, toNumber, incomingMessage);
+
+    // Route to the appropriate service
+    IMessageService service = serviceName switch
+    {
+        "learnedgeek" => learnedGeekService,
+        "triage" => triageService,
+        _ => triageService
+    };
+
+    var responseText = await service.ProcessMessageAsync(fromNumber, incomingMessage);
 
     // Build TwiML response (same format for SMS and WhatsApp)
     var response = new MessagingResponse();
     response.Message(responseText);
 
-    logger.LogInformation("Triage response to {Number}: {Response}", fromNumber, responseText);
+    logger.LogInformation("[{Service}] Response to {Number}: {Response}", serviceName, fromNumber, responseText);
 
     return Results.Content(response.ToString(), "application/xml");
 });

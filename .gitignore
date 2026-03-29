@@ -23,6 +23,7 @@ docs/intern/
 
 ## Tokens & secrets
 *.token
+*.apikey
 
 ## Temp files
 tmp/
