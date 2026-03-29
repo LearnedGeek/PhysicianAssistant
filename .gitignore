@@ -21,6 +21,12 @@ conversations/
 ## Intern (contains PII — resumes, contact info)
 docs/intern/
 
+## Tokens & secrets
+*.token
+
+## Temp files
+tmp/
+
 ## OS
 Thumbs.db
 .DS_Store
