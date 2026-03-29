@@ -3,15 +3,17 @@ Meeting Transcription — Whisper large-v3 + Speaker Diarization
 Handles Spanish/English code-switching for Infanzia/DrOk meetings.
 
 Usage:
-    python transcribe.py meeting.mp3
-    python transcribe.py meeting.mp3 --output transcript.txt
-    python transcribe.py meeting.mp3 --srt
-    python transcribe.py meeting.mp3 --diarize
-    python transcribe.py meeting.mp3 --diarize --speakers 3
+    python transcribe.py meeting.mp4
+    python transcribe.py meeting.mp4 --output transcript.txt
+    python transcribe.py meeting.mp4 --srt
+    python transcribe.py meeting.mp4 --diarize --speakers 3
+    python transcribe.py meeting.mp4 --groq --diarize --speakers 3
 """
 
 import argparse
+import json
 import os
+import subprocess
 import sys
 from pathlib import Path
 
@@ -60,21 +62,24 @@ if _nvidia_path.exists():
         os.environ["PATH"] = str(lib_dir) + os.pathsep + os.environ.get("PATH", "")
 
 
-def _ensure_wav(audio_path):
-    """Convert audio to 16kHz mono WAV for pyannote compatibility."""
-    import subprocess
-    wav_path = audio_path.with_suffix(".diarize.wav")
-    if wav_path.exists():
-        wav_path.unlink()
-    print(f"Converting to WAV for diarization...")
-    subprocess.run(
-        ["ffmpeg", "-i", str(audio_path), "-ar", "16000", "-ac", "1", "-y", str(wav_path)],
-        capture_output=True,
-    )
-    if not wav_path.exists():
+def _convert_audio(audio_path, suffix, sample_rate=16000, mono=True, bitrate=None):
+    """Convert audio to a specific format via FFmpeg."""
+    out_path = audio_path.with_suffix(suffix)
+    if out_path.exists():
+        out_path.unlink()
+    cmd = ["ffmpeg", "-i", str(audio_path)]
+    if sample_rate:
+        cmd += ["-ar", str(sample_rate)]
+    if mono:
+        cmd += ["-ac", "1"]
+    if bitrate:
+        cmd += ["-b:a", bitrate]
+    cmd += ["-y", str(out_path)]
+    subprocess.run(cmd, capture_output=True)
+    if not out_path.exists():
         print("Error: FFmpeg conversion failed")
         sys.exit(1)
-    return wav_path
+    return out_path
 
 
 def _run_diarization(audio_path, num_speakers=None):
@@ -86,7 +91,7 @@ def _run_diarization(audio_path, num_speakers=None):
         sys.exit(1)
 
     # Convert to WAV first (avoids torchcodec issues on Windows)
-    wav_path = _ensure_wav(audio_path)
+    wav_path = _convert_audio(audio_path, ".diarize.wav")
 
     print("Loading diarization model...")
 
@@ -107,7 +112,6 @@ def _run_diarization(audio_path, num_speakers=None):
     pipeline = Pipeline.from_pretrained("pyannote/speaker-diarization-3.1")
 
     # Move to GPU if available
-    import torch
     if torch.cuda.is_available():
         pipeline.to(torch.device("cuda"))
         print("Diarization using GPU (CUDA)")
@@ -118,9 +122,8 @@ def _run_diarization(audio_path, num_speakers=None):
 
     # Load audio as waveform (bypasses torchcodec which is broken on Windows)
     import soundfile as sf
-    import torch as _torch
     audio_data, sample_rate = sf.read(str(wav_path))
-    waveform = _torch.from_numpy(audio_data).float().unsqueeze(0)  # (1, samples)
+    waveform = torch.from_numpy(audio_data).float().unsqueeze(0)  # (1, samples)
     audio_input = {"waveform": waveform, "sample_rate": sample_rate}
 
     diarization_params = {}
@@ -159,6 +162,119 @@ def _get_speaker_at(timestamp, speaker_segments):
     return closest_speaker
 
 
+def _load_groq_key():
+    """Load Groq API key from groq.apikey file next to this script."""
+    key_path = Path(__file__).parent / "groq.apikey"
+    if not key_path.exists():
+        print(f"Error: Groq API key not found at {key_path}")
+        print("Create a file 'groq.apikey' in the scripts directory with your API key.")
+        sys.exit(1)
+    return key_path.read_text().strip()
+
+
+def _transcribe_groq(audio_path, language=None):
+    """Transcribe audio using Groq API. Returns list of segment-like objects."""
+    import httpx
+
+    api_key = _load_groq_key()
+
+    # Convert to compressed MP3 to stay under 25MB limit
+    # Auto-adjust bitrate downward if needed
+    max_size_mb = 25
+    for bitrate in ["48k", "32k", "24k"]:
+        mp3_path = _convert_audio(audio_path, ".groq.mp3", sample_rate=16000, mono=True, bitrate=bitrate)
+        file_size_mb = mp3_path.stat().st_size / (1024 * 1024)
+        print(f"Prepared audio for Groq: {file_size_mb:.1f}MB (bitrate: {bitrate})")
+        if file_size_mb <= max_size_mb:
+            break
+    else:
+        print(f"Warning: File is still {file_size_mb:.1f}MB after compression — may be rejected.")
+        print("Consider splitting the recording or upgrading to Groq dev tier (100MB).")
+
+    print("Sending to Groq API (whisper-large-v3)...")
+
+    data = {"model": "whisper-large-v3", "response_format": "verbose_json"}
+    if language:
+        data["language"] = language
+
+    with open(mp3_path, "rb") as f:
+        response = httpx.post(
+            "https://api.groq.com/openai/v1/audio/transcriptions",
+            headers={"Authorization": f"Bearer {api_key}"},
+            data=data,
+            files={"file": (mp3_path.name, f, "audio/mpeg")},
+            timeout=300,
+        )
+
+    # Clean up temp MP3
+    mp3_path.unlink(missing_ok=True)
+
+    if response.status_code != 200:
+        print(f"Groq API error {response.status_code}: {response.text}")
+        sys.exit(1)
+
+    result = response.json()
+    detected_lang = result.get("language", "unknown")
+    print(f"Groq transcription complete. Detected language: {detected_lang}")
+
+    # Convert Groq segments to a common format
+    segments = []
+    for seg in result.get("segments", []):
+        segments.append(_GroqSegment(
+            start=seg["start"],
+            end=seg["end"],
+            text=seg["text"].strip(),
+        ))
+
+    print(f"  {len(segments)} segments received from Groq")
+    return segments, detected_lang
+
+
+class _GroqSegment:
+    """Simple segment object matching faster-whisper's interface."""
+    def __init__(self, start, end, text):
+        self.start = start
+        self.end = end
+        self.text = text
+
+
+def _transcribe_local(audio_path, model_name, language=None):
+    """Transcribe audio using local faster-whisper. Returns list of segments and language."""
+    try:
+        from faster_whisper import WhisperModel
+    except ImportError:
+        print("faster-whisper not installed. Run: pip install faster-whisper")
+        sys.exit(1)
+
+    print(f"\nLoading Whisper model '{model_name}'...")
+    try:
+        model = WhisperModel(model_name, device="cuda", compute_type="float16")
+        print("Using GPU (CUDA)")
+    except RuntimeError:
+        print("CUDA not available — using CPU (slower but works)")
+        model = WhisperModel(model_name, device="cpu", compute_type="int8")
+
+    print(f"Transcribing {audio_path.name}...")
+    segments, info = model.transcribe(
+        str(audio_path),
+        language=language,
+        vad_filter=True,
+        vad_parameters=dict(
+            min_silence_duration_ms=1500,
+            speech_pad_ms=400,
+        ),
+        repetition_penalty=1.2,
+        no_repeat_ngram_size=3,
+        hallucination_silence_threshold=2,
+    )
+
+    print(f"Detected language: {info.language} (probability {info.language_probability:.2f})")
+
+    # Collect all segments (generator → list)
+    all_segments = list(segments)
+    return all_segments, info.language
+
+
 def main():
     parser = argparse.ArgumentParser(description="Transcribe audio with Whisper (multilingual)")
     parser.add_argument("audio", help="Path to audio file (mp3, wav, m4a, mp4, etc.)")
@@ -168,6 +284,7 @@ def main():
     parser.add_argument("--language", default=None, help="Force language (default: auto-detect)")
     parser.add_argument("--diarize", action="store_true", help="Enable speaker diarization (requires pyannote.audio)")
     parser.add_argument("--speakers", type=int, default=None, help="Expected number of speakers (helps diarization accuracy)")
+    parser.add_argument("--groq", action="store_true", help="Use Groq API for transcription (fast, requires groq.apikey)")
     args = parser.parse_args()
 
     audio_path = Path(args.audio)
@@ -175,52 +292,26 @@ def main():
         print(f"Error: {audio_path} not found")
         sys.exit(1)
 
-    # Run diarization first if requested (before Whisper to parallelize GPU usage)
+    # Run diarization first if requested (local GPU — fast)
     speaker_segments = None
     if args.diarize:
         speaker_segments = _run_diarization(audio_path, args.speakers)
 
-    try:
-        from faster_whisper import WhisperModel
-    except ImportError:
-        print("faster-whisper not installed. Run: pip install faster-whisper")
-        sys.exit(1)
-
-    # Try GPU first, fall back to CPU if CUDA libraries missing
-    print(f"\nLoading Whisper model '{args.model}'...")
-    try:
-        model = WhisperModel(args.model, device="cuda", compute_type="float16")
-        print("Using GPU (CUDA)")
-    except RuntimeError:
-        print("CUDA not available — using CPU (slower but works)")
-        model = WhisperModel(args.model, device="cpu", compute_type="int8")
-
-    print(f"Transcribing {audio_path.name}...")
-    segments, info = model.transcribe(
-        str(audio_path),
-        language=args.language,
-        vad_filter=True,
-        vad_parameters=dict(
-            min_silence_duration_ms=1500,  # wait 1.5s of silence before splitting
-            speech_pad_ms=400,             # pad speech segments to avoid cutting words
-        ),
-        repetition_penalty=1.2,            # reduce hallucinated "Mm-hmm" loops
-        no_repeat_ngram_size=3,            # prevent 3-gram repetition
-        hallucination_silence_threshold=2, # skip segments during 2s+ silence
-    )
-
-    print(f"Detected language: {info.language} (probability {info.language_probability:.2f})")
-
-    # Collect segments, filtering hallucinated filler
-    all_segments = []
+    # Transcribe — either Groq API or local
     filler_patterns = {"mm-hmm", "mmm", "mm hmm", "uh", "um", "hmm", "mhm"}
-    for segment in segments:
+
+    if args.groq:
+        raw_segments, detected_lang = _transcribe_groq(audio_path, args.language)
+    else:
+        raw_segments, detected_lang = _transcribe_local(audio_path, args.model, args.language)
+
+    # Filter filler and print progress
+    all_segments = []
+    for segment in raw_segments:
         text = segment.text.strip()
-        # Skip hallucinated filler (repeated "Mm-hmm" during silence)
         if text.lower().rstrip(".,-!?") in filler_patterns:
             continue
         all_segments.append(segment)
-        # Print progress
         speaker_label = ""
         if speaker_segments:
             speaker = _get_speaker_at((segment.start + segment.end) / 2, speaker_segments)
@@ -303,7 +394,8 @@ def main():
             mins = total / 60
             print(f"  {speaker}: {mins:.1f} minutes")
 
-    print(f"\nDone. {len(merged_segments)} lines from {len(all_segments)} segments, {info.language} detected.")
+    engine = "Groq API" if args.groq else f"local ({args.model})"
+    print(f"\nDone. {len(merged_segments)} lines from {len(all_segments)} segments, {detected_lang} detected, engine: {engine}.")
 
 
 def _format_time(seconds: float) -> str:
