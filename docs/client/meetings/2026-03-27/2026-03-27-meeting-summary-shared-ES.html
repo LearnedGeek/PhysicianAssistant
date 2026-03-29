@@ -1,0 +1,462 @@
+<!DOCTYPE html><html><head>
+      <title>2026-03-27-meeting-summary-shared-ES</title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      
+      <link rel="stylesheet" href="file:///c:\Users\mcart\.vscode\extensions\shd101wyy.markdown-preview-enhanced-0.8.22\crossnote\dependencies\katex\katex.min.css">
+      
+      
+      
+      
+      
+      <style>
+      code[class*=language-],pre[class*=language-]{color:#333;background:0 0;font-family:Consolas,"Liberation Mono",Menlo,Courier,monospace;text-align:left;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;line-height:1.4;-moz-tab-size:8;-o-tab-size:8;tab-size:8;-webkit-hyphens:none;-moz-hyphens:none;-ms-hyphens:none;hyphens:none}pre[class*=language-]{padding:.8em;overflow:auto;border-radius:3px;background:#f5f5f5}:not(pre)>code[class*=language-]{padding:.1em;border-radius:.3em;white-space:normal;background:#f5f5f5}.token.blockquote,.token.comment{color:#969896}.token.cdata{color:#183691}.token.doctype,.token.macro.property,.token.punctuation,.token.variable{color:#333}.token.builtin,.token.important,.token.keyword,.token.operator,.token.rule{color:#a71d5d}.token.attr-value,.token.regex,.token.string,.token.url{color:#183691}.token.atrule,.token.boolean,.token.code,.token.command,.token.constant,.token.entity,.token.number,.token.property,.token.symbol{color:#0086b3}.token.prolog,.token.selector,.token.tag{color:#63a35c}.token.attr-name,.token.class,.token.class-name,.token.function,.token.id,.token.namespace,.token.pseudo-class,.token.pseudo-element,.token.url-reference .token.variable{color:#795da3}.token.entity{cursor:help}.token.title,.token.title .token.punctuation{font-weight:700;color:#1d3e81}.token.list{color:#ed6a43}.token.inserted{background-color:#eaffea;color:#55a532}.token.deleted{background-color:#ffecec;color:#bd2c00}.token.bold{font-weight:700}.token.italic{font-style:italic}.language-json .token.property{color:#183691}.language-markup .token.tag .token.punctuation{color:#333}.language-css .token.function,code.language-css{color:#0086b3}.language-yaml .token.atrule{color:#63a35c}code.language-yaml{color:#183691}.language-ruby .token.function{color:#333}.language-markdown .token.url{color:#795da3}.language-makefile .token.symbol{color:#795da3}.language-makefile .token.variable{color:#183691}.language-makefile .token.builtin{color:#0086b3}.language-bash .token.keyword{color:#0086b3}pre[data-line]{position:relative;padding:1em 0 1em 3em}pre[data-line] .line-highlight-wrapper{position:absolute;top:0;left:0;background-color:transparent;display:block;width:100%}pre[data-line] .line-highlight{position:absolute;left:0;right:0;padding:inherit 0;margin-top:1em;background:hsla(24,20%,50%,.08);background:linear-gradient(to right,hsla(24,20%,50%,.1) 70%,hsla(24,20%,50%,0));pointer-events:none;line-height:inherit;white-space:pre}pre[data-line] .line-highlight:before,pre[data-line] .line-highlight[data-end]:after{content:attr(data-start);position:absolute;top:.4em;left:.6em;min-width:1em;padding:0 .5em;background-color:hsla(24,20%,50%,.4);color:#f4f1ef;font:bold 65%/1.5 sans-serif;text-align:center;vertical-align:.3em;border-radius:999px;text-shadow:none;box-shadow:0 1px #fff}pre[data-line] .line-highlight[data-end]:after{content:attr(data-end);top:auto;bottom:.4em}html body{font-family:'Helvetica Neue',Helvetica,'Segoe UI',Arial,freesans,sans-serif;font-size:16px;line-height:1.6;color:#333;background-color:#fff;overflow:initial;box-sizing:border-box;word-wrap:break-word}html body>:first-child{margin-top:0}html body h1,html body h2,html body h3,html body h4,html body h5,html body h6{line-height:1.2;margin-top:1em;margin-bottom:16px;color:#000}html body h1{font-size:2.25em;font-weight:300;padding-bottom:.3em}html body h2{font-size:1.75em;font-weight:400;padding-bottom:.3em}html body h3{font-size:1.5em;font-weight:500}html body h4{font-size:1.25em;font-weight:600}html body h5{font-size:1.1em;font-weight:600}html body h6{font-size:1em;font-weight:600}html body h1,html body h2,html body h3,html body h4,html body h5{font-weight:600}html body h5{font-size:1em}html body h6{color:#5c5c5c}html body strong{color:#000}html body del{color:#5c5c5c}html body a:not([href]){color:inherit;text-decoration:none}html body a{color:#08c;text-decoration:none}html body a:hover{color:#00a3f5;text-decoration:none}html body img{max-width:100%}html body>p{margin-top:0;margin-bottom:16px;word-wrap:break-word}html body>ol,html body>ul{margin-bottom:16px}html body ol,html body ul{padding-left:2em}html body ol.no-list,html body ul.no-list{padding:0;list-style-type:none}html body ol ol,html body ol ul,html body ul ol,html body ul ul{margin-top:0;margin-bottom:0}html body li{margin-bottom:0}html body li.task-list-item{list-style:none}html body li>p{margin-top:0;margin-bottom:0}html body .task-list-item-checkbox{margin:0 .2em .25em -1.8em;vertical-align:middle}html body .task-list-item-checkbox:hover{cursor:pointer}html body blockquote{margin:16px 0;font-size:inherit;padding:0 15px;color:#5c5c5c;background-color:#f0f0f0;border-left:4px solid #d6d6d6}html body blockquote>:first-child{margin-top:0}html body blockquote>:last-child{margin-bottom:0}html body hr{height:4px;margin:32px 0;background-color:#d6d6d6;border:0 none}html body table{margin:10px 0 15px 0;border-collapse:collapse;border-spacing:0;display:block;width:100%;overflow:auto;word-break:normal;word-break:keep-all}html body table th{font-weight:700;color:#000}html body table td,html body table th{border:1px solid #d6d6d6;padding:6px 13px}html body dl{padding:0}html body dl dt{padding:0;margin-top:16px;font-size:1em;font-style:italic;font-weight:700}html body dl dd{padding:0 16px;margin-bottom:16px}html body code{font-family:Menlo,Monaco,Consolas,'Courier New',monospace;font-size:.85em;color:#000;background-color:#f0f0f0;border-radius:3px;padding:.2em 0}html body code::after,html body code::before{letter-spacing:-.2em;content:'\00a0'}html body pre>code{padding:0;margin:0;word-break:normal;white-space:pre;background:0 0;border:0}html body .highlight{margin-bottom:16px}html body .highlight pre,html body pre{padding:1em;overflow:auto;line-height:1.45;border:#d6d6d6;border-radius:3px}html body .highlight pre{margin-bottom:0;word-break:normal}html body pre code,html body pre tt{display:inline;max-width:initial;padding:0;margin:0;overflow:initial;line-height:inherit;word-wrap:normal;background-color:transparent;border:0}html body pre code:after,html body pre code:before,html body pre tt:after,html body pre tt:before{content:normal}html body blockquote,html body dl,html body ol,html body p,html body pre,html body ul{margin-top:0;margin-bottom:16px}html body kbd{color:#000;border:1px solid #d6d6d6;border-bottom:2px solid #c7c7c7;padding:2px 4px;background-color:#f0f0f0;border-radius:3px}@media print{html body{background-color:#fff}html body h1,html body h2,html body h3,html body h4,html body h5,html body h6{color:#000;page-break-after:avoid}html body blockquote{color:#5c5c5c}html body pre{page-break-inside:avoid}html body table{display:table}html body img{display:block;max-width:100%;max-height:100%}html body code,html body pre{word-wrap:break-word;white-space:pre}}.markdown-preview{width:100%;height:100%;box-sizing:border-box}.markdown-preview ul{list-style:disc}.markdown-preview ul ul{list-style:circle}.markdown-preview ul ul ul{list-style:square}.markdown-preview ol{list-style:decimal}.markdown-preview ol ol,.markdown-preview ul ol{list-style-type:lower-roman}.markdown-preview ol ol ol,.markdown-preview ol ul ol,.markdown-preview ul ol ol,.markdown-preview ul ul ol{list-style-type:lower-alpha}.markdown-preview .newpage,.markdown-preview .pagebreak{page-break-before:always}.markdown-preview pre.line-numbers{position:relative;padding-left:3.8em;counter-reset:linenumber}.markdown-preview pre.line-numbers>code{position:relative}.markdown-preview pre.line-numbers .line-numbers-rows{position:absolute;pointer-events:none;top:1em;font-size:100%;left:0;width:3em;letter-spacing:-1px;border-right:1px solid #999;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.markdown-preview pre.line-numbers .line-numbers-rows>span{pointer-events:none;display:block;counter-increment:linenumber}.markdown-preview pre.line-numbers .line-numbers-rows>span:before{content:counter(linenumber);color:#999;display:block;padding-right:.8em;text-align:right}.markdown-preview .mathjax-exps .MathJax_Display{text-align:center!important}.markdown-preview:not([data-for=preview]) .code-chunk .code-chunk-btn-group{display:none}.markdown-preview:not([data-for=preview]) .code-chunk .status{display:none}.markdown-preview:not([data-for=preview]) .code-chunk .output-div{margin-bottom:16px}.markdown-preview .md-toc{padding:0}.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link{display:inline;padding:.25rem 0}.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link div,.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link p{display:inline}.markdown-preview .md-toc .md-toc-link-wrapper.highlighted .md-toc-link{font-weight:800}.scrollbar-style::-webkit-scrollbar{width:8px}.scrollbar-style::-webkit-scrollbar-track{border-radius:10px;background-color:transparent}.scrollbar-style::-webkit-scrollbar-thumb{border-radius:5px;background-color:rgba(150,150,150,.66);border:4px solid rgba(150,150,150,.66);background-clip:content-box}html body[for=html-export]:not([data-presentation-mode]){position:relative;width:100%;height:100%;top:0;left:0;margin:0;padding:0;overflow:auto}html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{position:relative;top:0;min-height:100vh}@media screen and (min-width:914px){html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{padding:2em calc(50% - 457px + 2em)}}@media screen and (max-width:914px){html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{padding:2em}}@media screen and (max-width:450px){html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{font-size:14px!important;padding:1em}}@media print{html body[for=html-export]:not([data-presentation-mode]) #sidebar-toc-btn{display:none}}html body[for=html-export]:not([data-presentation-mode]) #sidebar-toc-btn{position:fixed;bottom:8px;left:8px;font-size:28px;cursor:pointer;color:inherit;z-index:99;width:32px;text-align:center;opacity:.4}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] #sidebar-toc-btn{opacity:1}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc{position:fixed;top:0;left:0;width:300px;height:100%;padding:32px 0 48px 0;font-size:14px;box-shadow:0 0 4px rgba(150,150,150,.33);box-sizing:border-box;overflow:auto;background-color:inherit}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar{width:8px}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-track{border-radius:10px;background-color:transparent}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-thumb{border-radius:5px;background-color:rgba(150,150,150,.66);border:4px solid rgba(150,150,150,.66);background-clip:content-box}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc a{text-decoration:none}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc{padding:0 16px}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link{display:inline;padding:.25rem 0}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link div,html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link p{display:inline}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper.highlighted .md-toc-link{font-weight:800}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{left:300px;width:calc(100% - 300px);padding:2em calc(50% - 457px - 300px / 2);margin:0;box-sizing:border-box}@media screen and (max-width:1274px){html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{padding:2em}}@media screen and (max-width:450px){html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{width:100%}}html body[for=html-export]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .markdown-preview{left:50%;transform:translateX(-50%)}html body[for=html-export]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .md-sidebar-toc{display:none}
+/* Please visit the URL below for more information: */
+/*   https://shd101wyy.github.io/markdown-preview-enhanced/#/customize-css */
+
+      </style>
+      <script type="text/javascript">
+  document.addEventListener("DOMContentLoaded", function () {
+    // your code here
+  });
+</script>
+    </head>
+    <body for="html-export">
+      <div class="crossnote markdown-preview  ">
+      
+<h1 id="resumen-de-reunión--27-de-marzo-de-2026">Resumen de Reunión — 27 de marzo de 2026 </h1>
+<h2 id="plataforma-drok--llamada-de-alineamiento-para-discovery">Plataforma DrOk — Llamada de Alineamiento para Discovery </h2>
+<p><strong>Fecha:</strong> 2026-03-27<br>
+<strong>Duración:</strong> ~35 minutos<br>
+<strong>Asistentes:</strong> Mark McArthey (Learned Geek LLC), Dr. Martín Núñez, Carlos Rojas Klauer (Asesor Legal — Innovación y Tecnología), Karen McArthey (Apoyo en Traducción)<br>
+<strong>Formato:</strong> Google Meet</p>
+<hr>
+<h2 id="1-decisiones-tomadas">1. Decisiones Tomadas </h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Decisión</th>
+<th>Responsable</th>
+<th>Notas</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>D001</td>
+<td>Martín (o su entidad clínica) es el <strong>responsable del tratamiento de datos</strong>; Learned Geek es el <strong>encargado del tratamiento</strong></td>
+<td>Todos</td>
+<td>Carlos confirmó según Ley 29733</td>
+</tr>
+<tr>
+<td>D002</td>
+<td>Se requiere un <strong>Acuerdo de Procesamiento de Datos (DPA)</strong> entre Martín y Learned Geek</td>
+<td>Mark + Carlos</td>
+<td>Debe definir finalidades, seguridad, sub-encargados, devolución/destrucción de datos</td>
+</tr>
+<tr>
+<td>D003</td>
+<td>El registro ante la ANPDP es obligación de Martín como responsable del tratamiento</td>
+<td>Martín</td>
+<td>Learned Geek declarado como encargado; Anthropic/Twilio como sub-encargados</td>
+</tr>
+<tr>
+<td>D004</td>
+<td><strong>Un padre/tutor legal</strong> es suficiente en la práctica para el consentimiento de datos de menores</td>
+<td>Carlos</td>
+<td>Ambos padres mantienen autoridad para solicitar cambios</td>
+</tr>
+<tr>
+<td>D005</td>
+<td>Los registros médicos <strong>no se pueden eliminar</strong> — solo bloquear; los datos brutos deben preservarse</td>
+<td>Todos</td>
+<td>Ley peruana; el sistema debe mantener trazabilidad completa</td>
+</tr>
+<tr>
+<td>D006</td>
+<td>Retención de datos: <strong>5 años electrónicos</strong>, 20 años físicos (nos aplica el estándar electrónico)</td>
+<td>Martín</td>
+<td>Según NTS N° 139-MINSA y Ley General de Salud</td>
+</tr>
+<tr>
+<td>D007</td>
+<td>La transferencia internacional de datos requiere <strong>trazabilidad</strong> — registro de auditoría de flujos de datos</td>
+<td>Martín + Carlos</td>
+<td>Ver "Qué Cambió" abajo</td>
+</tr>
+<tr>
+<td>D008</td>
+<td>La IA proporciona <strong>solo asesoramiento</strong>; el médico mantiene toda la responsabilidad clínica</td>
+<td>Todos</td>
+<td>El VoBo valida toda la información de la IA</td>
+</tr>
+<tr>
+<td>D009</td>
+<td><strong>La clasificación DIGEMID no bloquea el MVP</strong>, pero el registro voluntario tiene valor estratégico a largo plazo</td>
+<td>Todos</td>
+<td>Carlos prefiere buscar el registro de forma proactiva</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="2-qué-cambió">2. Qué Cambió </h2>
+<p>Actualizaciones a posiciones anteriores basadas en la discusión de esta reunión.</p>
+<table>
+<thead>
+<tr>
+<th>Entendimiento Anterior</th>
+<th>Entendimiento Actualizado</th>
+<th>Fuente</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Se requieren SCCs para la transferencia Perú→EE.UU. (análisis escrito, 23 de marzo)</td>
+<td>Posición en la reunión: solo se requiere trazabilidad. <strong>Estas posiciones necesitan reconciliación formal.</strong></td>
+<td>Carlos + Martín en reunión</td>
+</tr>
+<tr>
+<td>Ambos padres requeridos para datos sensibles transfronterizos (análisis escrito)</td>
+<td>Un padre es suficiente en la práctica; ambos mantienen autoridad para solicitar cambios</td>
+<td>Carlos en reunión</td>
+</tr>
+<tr>
+<td>DIGEMID: zona gris, esperar</td>
+<td>Carlos <strong>prefiere el registro proactivo</strong> y preguntó a Martín sobre un contacto en una clínica para confirmar el alcance. La ANPDP es rápida; DIGEMID es más lenta.</td>
+<td>Carlos en reunión</td>
+</tr>
+<tr>
+<td>Ley de telemedicina (Ley 30421) no discutida</td>
+<td>Carlos la abordó: SÍ existe una ley de telemedicina con limitaciones sobre notificaciones automatizadas, pero no cree que caigamos bajo clasificación de dispositivo médico. Opinión formal pendiente.</td>
+<td>Carlos en reunión</td>
+</tr>
+<tr>
+<td>Plataforma no es un sistema de registro clínico (analogía del Apple Watch)</td>
+<td>Martín también reconoció la obligación de "registrarse como agentes que controlan, registran y almacenan historias clínicas" ante el Ministerio de Salud. Posición más matizada de lo capturado inicialmente.</td>
+<td>Martín en reunión</td>
+</tr>
+<tr>
+<td>Cronograma del MVP desconocido</td>
+<td><strong>Julio 2026</strong> propuesto por Carlos — con retroalimentación de usuarios antes del lanzamiento al mercado</td>
+<td>Carlos en reunión</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="3-resumen-de-discusión">3. Resumen de Discusión </h2>
+<h3 id="registro-anpdp-y-roles-de-datos">Registro ANPDP y Roles de Datos </h3>
+<p>Carlos confirmó claramente la separación responsable/encargado. Martín es el responsable (determina la finalidad del tratamiento de datos); Learned Geek es el encargado (proporciona la tecnología). Se requiere un DPA. Todos los sub-encargados (Anthropic, Twilio) deben declararse en el registro ante la ANPDP. Carlos señaló que la ANPDP es una autoridad que responde eficientemente.</p>
+<h3 id="transferencia-internacional-de-datos">Transferencia Internacional de Datos </h3>
+<p>Martín y Carlos indicaron que Perú requiere trazabilidad de los flujos de datos pero actualmente no tiene restricciones específicas para la transferencia Perú→EE.UU., siempre que se mantenga la trazabilidad. Mark señaló que existen opciones de infraestructura en la nube en América Latina (Azure Brasil) si la residencia de datos se convierte en una preocupación. Mark confirmó que ya revisó las Políticas de Uso Aceptable de Anthropic y Twilio para uso en salud — sin problemas identificados. <strong>Sin embargo:</strong> esta posición es más simple que el análisis escrito de Martín del 23 de marzo, que indicaba que se requieren SCCs. Esto debe reconciliarse formalmente.</p>
+<h3 id="consentimiento-de-menores">Consentimiento de Menores </h3>
+<p>Carlos confirmó que un padre es suficiente en la práctica. Se requiere consentimiento expreso dado que son datos de salud sensibles. Ambos padres mantienen autoridad para solicitar cambios o restricciones. El mecanismo de consentimiento debe ser digital, capturado dentro de la plataforma mediante un flujo de confirmación con verificación de identidad.</p>
+<h3 id="retención-e-inmutabilidad-de-datos">Retención e Inmutabilidad de Datos </h3>
+<p>Los registros médicos no pueden eliminarse bajo la ley peruana. El sistema debe preservar los datos brutos sin modificación. Martín enfatizó la trazabilidad como el requisito central. La retención es de 5 años para registros electrónicos. La posición de Martín es que la plataforma no es un sistema formal de registro clínico (HCE), pero también reconoció una obligación de registro ante el Ministerio de Salud para la gestión de historias clínicas — una posición más matizada que la analogía del Apple Watch por sí sola.</p>
+<h3 id="clasificación-de-dispositivo-médico-digemid">Clasificación de Dispositivo Médico (DIGEMID) </h3>
+<p>Esta fue la discusión más matizada. Martín sostiene que el sistema proporciona asesoramiento, no diagnóstico. Carlos reconoció la zona gris pero dijo que <strong>prefiere buscar el registro de forma proactiva</strong> — preguntó a Martín sobre un contacto en una clínica específica para confirmar el alcance. Carlos señaló que DIGEMID es una autoridad más lenta que la ANPDP, lo cual tiene implicaciones para el cronograma. Carlos también abordó la ley de telemedicina (Ley 30421): existen limitaciones sobre notificaciones de sistemas automatizados, pero no cree que esto constituya un dispositivo médico. No bloquea el MVP, pero Carlos quiere claridad.</p>
+<h3 id="marca-drok">Marca DrOk </h3>
+<p>"DrOk" no está actualmente registrada como marca. Martín reconoció que necesita hacerlo. Las restricciones del acuerdo de franquicia de Infanzia/Kezer-Lab aún necesitan revisión.</p>
+<h3 id="cronograma-y-alcance">Cronograma y Alcance </h3>
+<p>Sin fecha límite externa. Carlos propuso <strong>MVP para julio de 2026</strong> con pruebas de usuario y retroalimentación antes del lanzamiento al mercado. Preguntó específicamente sobre el diseño UX/UI, la confianza de los usuarios en canales de IA, y cuánto tardaría la construcción técnica. Martín dijo que puede proporcionar 50-100 médicos para probar el MVP. Martín hizo referencia a la adopción de IA por médicos desde el COVID (especialmente en imágenes diagnósticas) y plataformas existentes (PubMed, OpenEvidence con Cleveland Clinic / Mayo Clinic) como validación del mercado.</p>
+<h3 id="autenticidad-y-seguridad-de-la-ia">Autenticidad y Seguridad de la IA </h3>
+<p>Mark describió su investigación de 6 meses sobre la confabulación de la IA y el enfoque basado en citaciones de PubMed. Carlos planteó independientemente la autenticidad de la IA como una preocupación crítica — haciendo referencia a incidentes reales de seguridad con IA. Carlos usó la palabra "veracidad" para describir el concepto. Tanto Carlos como Martín quieren ver el documento de autenticidad. Mark se comprometió a compartirlo.</p>
+<h3 id="dinámica-del-equipo">Dinámica del Equipo </h3>
+<p>Carlos validó la división de expertise: Martín (médica), Mark (técnica, privacidad de datos), Carlos (legal). Dijo: "Me gusta que seas cuidadoso con la data porque este negocio necesita esa óptica." Martín reforzó la visión mundial. Mark respondió: "Este es un problema que muchos intentan resolver, pero nadie lo ha logrado todavía. ¿Por qué no nosotros?"</p>
+<hr>
+<h2 id="4-tareas-pendientes">4. Tareas Pendientes </h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Responsable</th>
+<th>Acción</th>
+<th>Fecha</th>
+<th>Estado</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A001</td>
+<td>Mark</td>
+<td>Enviar resumen de reunión por correo</td>
+<td>28 de marzo</td>
+<td>🔴</td>
+</tr>
+<tr>
+<td>A002</td>
+<td>Mark</td>
+<td>Configurar carpeta compartida en Google Drive con documentos del proyecto</td>
+<td>Este fin de semana</td>
+<td>🔴</td>
+</tr>
+<tr>
+<td>A003</td>
+<td>Mark</td>
+<td>Compartir documento de autenticidad de IA</td>
+<td>Este fin de semana</td>
+<td>🔴</td>
+</tr>
+<tr>
+<td>A004</td>
+<td>Mark</td>
+<td>Compartir referencias técnicas e investigación de IA</td>
+<td>Este fin de semana</td>
+<td>🔴</td>
+</tr>
+<tr>
+<td>A005</td>
+<td>Mark</td>
+<td>Preparar propuesta actualizada con alcance y fases</td>
+<td>Antes de la próxima reunión</td>
+<td>🔴</td>
+</tr>
+<tr>
+<td>A006</td>
+<td>Carlos</td>
+<td>Crear grupo de WhatsApp</td>
+<td>Esta semana</td>
+<td>🔴</td>
+</tr>
+<tr>
+<td>A007</td>
+<td>Carlos</td>
+<td>Contactar clínica para determinar alcance de DIGEMID</td>
+<td>Por definir</td>
+<td>🔴</td>
+</tr>
+<tr>
+<td>A008</td>
+<td>Martín</td>
+<td>Revisar e iniciar registro de marca "DrOk"</td>
+<td>En proceso</td>
+<td>🟡</td>
+</tr>
+<tr>
+<td>A009</td>
+<td>Martín</td>
+<td>Revisar y responder preguntas pendientes (franquicia, presupuesto, tasa de VoBo, mercado EE.UU., documentación de productos)</td>
+<td>Antes de la próxima reunión</td>
+<td>🔴</td>
+</tr>
+<tr>
+<td>A010</td>
+<td>Todos</td>
+<td>Programar reunión de seguimiento</td>
+<td>Próxima semana (est.)</td>
+<td>🔴</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="5-preguntas-pendientes">5. Preguntas Pendientes </h2>
+<h3 id="para-carlos-legal">Para Carlos (Legal) </h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Pregunta</th>
+<th>Prioridad</th>
+<th>Estado</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Q-C001</td>
+<td><strong>Clasificación DIGEMID:</strong> Se necesita opinión formal. Carlos prefiere registro proactivo; necesita contacto de clínica para confirmar alcance.</td>
+<td>Alta</td>
+<td>🟡 Carlos trabajando en ello</td>
+</tr>
+<tr>
+<td>Q-C002</td>
+<td><strong>Ley 30421 (Telemedicina):</strong> Carlos reconoció la ley con limitaciones sobre notificaciones automatizadas. Se necesita posición formal escrita.</td>
+<td>Alta</td>
+<td>🟡 Parcialmente abordado</td>
+</tr>
+<tr>
+<td>Q-C003</td>
+<td><strong>SCCs vs. trazabilidad:</strong> El análisis escrito (23 marzo) dice que se requieren SCCs; la reunión dice solo trazabilidad. ¿Cuál es la posición formal?</td>
+<td>Alta</td>
+<td>❓ Necesita reconciliación</td>
+</tr>
+<tr>
+<td>Q-C004</td>
+<td><strong>RENHICE / Ley 30024:</strong> ¿El sistema constituye una HCE? Posición matizada — necesita aclaración.</td>
+<td>Media</td>
+<td>🟡 Parcialmente abordado</td>
+</tr>
+<tr>
+<td>Q-C005</td>
+<td><strong>Cláusula de indemnización:</strong> Revisar lenguaje de responsabilidad clínica para carta de compromiso.</td>
+<td>Media</td>
+<td>🔴 No iniciado</td>
+</tr>
+</tbody>
+</table>
+<h3 id="para-martín-clínico--negocio">Para Martín (Clínico / Negocio) </h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Pregunta</th>
+<th>Prioridad</th>
+<th>Estado</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Q-M001</td>
+<td><strong>Restricciones de franquicia:</strong> ¿El acuerdo de Infanzia/Kezer-Lab tiene restricciones sobre herramientas de IA?</td>
+<td>Alta</td>
+<td>🔴 Planteado — sin respuesta</td>
+</tr>
+<tr>
+<td>Q-M002</td>
+<td><strong>Rango de presupuesto:</strong> Rango general de presupuesto para el proyecto.</td>
+<td>Alta</td>
+<td>🔴 No discutido</td>
+</tr>
+<tr>
+<td>Q-M003</td>
+<td><strong>Tasa de VoBo:</strong> % de casos rutinarios para revisión médica.</td>
+<td>Media</td>
+<td>🔴 No discutido</td>
+</tr>
+<tr>
+<td>Q-M004</td>
+<td><strong>Mercado EE.UU.:</strong> ¿Interés activo? ¿Se necesita soporte en inglés? Se mencionó brevemente turismo médico.</td>
+<td>Media</td>
+<td>🟡 Mencionado brevemente</td>
+</tr>
+<tr>
+<td>Q-M005</td>
+<td><strong>Documentación de productos:</strong> Fichas técnicas, tablas de dosificación, ingredientes para base de conocimiento del chatbot.</td>
+<td>Media</td>
+<td>🔴 No discutido</td>
+</tr>
+<tr>
+<td>Q-M006</td>
+<td><strong>Marca DrOk:</strong> Iniciar registro.</td>
+<td>Media</td>
+<td>🟡 Reconocido</td>
+</tr>
+<tr>
+<td>Q-M007</td>
+<td><strong>Contacto clínica DIGEMID:</strong> Carlos pidió a Martín un contacto en una clínica para confirmar alcance.</td>
+<td>Alta</td>
+<td>🔴 Pendiente Martín</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="6-estacionamiento">6. Estacionamiento </h2>
+<p>Temas mencionados pero no discutidos completamente. Se registran aquí para no perderlos.</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Tema</th>
+<th>Planteado Por</th>
+<th>Notas</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>P001</td>
+<td>Registro ante Ministerio de Salud como gestores de historias clínicas</td>
+<td>Martín</td>
+<td>Necesita aclaración — separado del registro ANPDP</td>
+</tr>
+<tr>
+<td>P002</td>
+<td>Monetización de datos a médicos e instituciones</td>
+<td>Martín</td>
+<td>Modelo de ingresos a largo plazo discutido en contexto de beneficio del registro DIGEMID</td>
+</tr>
+<tr>
+<td>P003</td>
+<td>Caso de uso de turismo médico</td>
+<td>Martín</td>
+<td>Pacientes con médicos en Perú y EE.UU.; registros médicos transfronterizos</td>
+</tr>
+<tr>
+<td>P004</td>
+<td>Drive compartido para colaboración continua</td>
+<td>Carlos</td>
+<td>Carlos sugirió Drive; Mark lo configurará este fin de semana</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="7-documentos">7. Documentos </h2>
+<h3 id="compartidos-previamente">Compartidos Previamente </h3>
+<table>
+<thead>
+<tr>
+<th>Documento</th>
+<th>Compartido Por</th>
+<th>Notas</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Items de Acción Pre-Discovery (EN + ES)</td>
+<td>Mark</td>
+<td>Carlos los revisó; base para la discusión</td>
+</tr>
+<tr>
+<td>Análisis Legal de Martín (260323 Proyecto DrOk)</td>
+<td>Martín</td>
+<td>Referenciado durante discusiones de transferencia y consentimiento</td>
+</tr>
+</tbody>
+</table>
+<h3 id="por-compartir-este-fin-de-semana">Por Compartir Este Fin de Semana </h3>
+<table>
+<thead>
+<tr>
+<th>Documento</th>
+<th>Responsable</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Documento de autenticidad de IA</td>
+<td>Mark</td>
+</tr>
+<tr>
+<td>Especificación técnica</td>
+<td>Mark</td>
+</tr>
+<tr>
+<td>Seguimiento del proyecto (compartido)</td>
+<td>Mark</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="8-próxima-reunión">8. Próxima Reunión </h2>
+<p><strong>Fecha tentativa:</strong> Semana del 30 de marzo al 3 de abril<br>
+<strong>Agenda propuesta:</strong></p>
+<ol>
+<li>Revisar tareas pendientes de esta reunión</li>
+<li>Carlos: posición formal sobre clasificación DIGEMID y Ley 30421</li>
+<li>Carlos: reconciliar posición de SCCs vs. trazabilidad para transferencia internacional</li>
+<li>Martín: restricciones de franquicia, rango de presupuesto, confirmación de cronograma</li>
+<li>Mark: presentar documento de autenticidad de IA</li>
+<li>Mark: presentar propuesta de alcance y fases</li>
+<li>Discutir enfoque seguro para compartir documentos</li>
+</ol>
+<hr>
+<p><em>Preparado por Mark McArthey, Learned Geek LLC</em></p>
+
+      </div>
+      
+      
+    
+    
+    
+    
+    
+    
+  
+    </body></html>
