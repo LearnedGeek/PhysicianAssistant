@@ -47,6 +47,7 @@ builder.Services.AddHttpClient<IPubMedService, PubMedService>()
 builder.Services.AddSingleton<IConversationService, FileConversationService>();
 builder.Services.AddSingleton<KnowledgeBaseService>();
 builder.Services.AddHttpClient();
+builder.Services.AddSingleton<NotificationService>();
 builder.Services.AddScoped<ITriageService, TriageService>();
 builder.Services.AddScoped<LearnedGeekService>();
 
@@ -97,6 +98,7 @@ app.MapPost("/sms", async (
     HttpRequest request,
     ITriageService triageService,
     LearnedGeekService learnedGeekService,
+    NotificationService notificationService,
     Microsoft.Extensions.Options.IOptions<RoutingSettings> routingOptions,
     ILogger<Program> logger) =>
 {
@@ -121,6 +123,9 @@ app.MapPost("/sms", async (
 
     logger.LogInformation("[{Service}] Message from {From} to {To}: {Message}",
         serviceName, fromNumber, toNumber, incomingMessage);
+
+    // Notify Mark if this is a new conversation (before processing)
+    await notificationService.NotifyIfNewConversationAsync(fromNumber, serviceName, incomingMessage);
 
     // Route to the appropriate service
     IMessageService service = serviceName switch
