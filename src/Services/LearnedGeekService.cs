@@ -6,8 +6,8 @@ public class LearnedGeekService : IMessageService
 {
     private readonly IClaudeService _claudeService;
     private readonly IConversationService _conversationService;
+    private readonly KnowledgeBaseService _knowledgeBaseService;
     private readonly ILogger<LearnedGeekService> _logger;
-    private readonly string _knowledgeBase;
 
     private const string SystemPrompt = """
         You are the Learned Geek AI assistant — a friendly, professional assistant that helps
@@ -45,36 +45,13 @@ public class LearnedGeekService : IMessageService
     public LearnedGeekService(
         IClaudeService claudeService,
         IConversationService conversationService,
+        KnowledgeBaseService knowledgeBaseService,
         ILogger<LearnedGeekService> logger)
     {
         _claudeService = claudeService;
         _conversationService = conversationService;
+        _knowledgeBaseService = knowledgeBaseService;
         _logger = logger;
-
-        // Load knowledge base from file — check multiple paths for local dev and Azure
-        string[] searchPaths =
-        [
-            Path.Combine(AppContext.BaseDirectory, "Content", "learned-geek-knowledge.md"),
-            Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "Content", "learned-geek-knowledge.md"),
-            Path.Combine("Content", "learned-geek-knowledge.md"),
-        ];
-
-        _knowledgeBase = "Learned Geek LLC is a technology consulting company. Contact: markm@learnedgeek.com";
-
-        foreach (var path in searchPaths)
-        {
-            if (File.Exists(path))
-            {
-                _knowledgeBase = File.ReadAllText(path);
-                _logger.LogInformation("Loaded Learned Geek knowledge base from {Path} ({Length} chars)", path, _knowledgeBase.Length);
-                break;
-            }
-        }
-
-        if (_knowledgeBase.Length < 100)
-        {
-            _logger.LogWarning("Knowledge base file not found in any search path, using fallback");
-        }
     }
 
     public async Task<string> ProcessMessageAsync(string phoneNumber, string message, CancellationToken cancellationToken = default)
@@ -92,7 +69,7 @@ public class LearnedGeekService : IMessageService
         {
             _conversationService.AddMessage(phoneNumber, "User", message);
 
-            var prompt = BuildPrompt(phoneNumber, message);
+            var prompt = await BuildPromptAsync(phoneNumber, message);
             var response = await _claudeService.GenerateAsync(prompt, SystemPrompt, cancellationToken);
 
             _conversationService.AddMessage(phoneNumber, "Assistant", response);
@@ -108,13 +85,14 @@ public class LearnedGeekService : IMessageService
         }
     }
 
-    private string BuildPrompt(string phoneNumber, string message)
+    private async Task<string> BuildPromptAsync(string phoneNumber, string message)
     {
         var promptBuilder = new StringBuilder();
 
-        // Add knowledge base context
+        // Add knowledge base context (static + dynamic RSS)
+        var knowledgeBase = await _knowledgeBaseService.GetKnowledgeBaseAsync();
         promptBuilder.AppendLine("[KNOWLEDGE BASE — use this to answer questions about Learned Geek]");
-        promptBuilder.AppendLine(_knowledgeBase);
+        promptBuilder.AppendLine(knowledgeBase);
         promptBuilder.AppendLine();
 
         // Add conversation history

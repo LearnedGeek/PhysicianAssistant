@@ -45,6 +45,8 @@ builder.Services.AddHttpClient<IPubMedService, PubMedService>()
 
 // Register services
 builder.Services.AddSingleton<IConversationService, FileConversationService>();
+builder.Services.AddSingleton<KnowledgeBaseService>();
+builder.Services.AddHttpClient();
 builder.Services.AddScoped<ITriageService, TriageService>();
 builder.Services.AddScoped<LearnedGeekService>();
 
@@ -57,6 +59,38 @@ app.MapGet("/health", () => Results.Ok(new
     service = "Learned Geek Platform",
     timestamp = DateTime.UtcNow
 }));
+
+// Admin endpoint — view recent conversations (protected by API key)
+app.MapGet("/admin/conversations", (
+    HttpRequest request,
+    IConversationService conversationService,
+    Microsoft.Extensions.Options.IOptions<ConversationSettings> convSettings) =>
+{
+    var adminKey = app.Configuration["Admin:ApiKey"];
+    var providedKey = request.Query["key"].ToString();
+
+    if (string.IsNullOrEmpty(adminKey) || providedKey != adminKey)
+        return Results.Unauthorized();
+
+    // Read conversation files from storage
+    var storagePath = convSettings.Value.StoragePath;
+    if (!Directory.Exists(storagePath))
+        return Results.Ok(new { conversations = Array.Empty<object>(), message = "No conversations yet" });
+
+    var conversations = Directory.GetFiles(storagePath, "*.json")
+        .OrderByDescending(f => File.GetLastWriteTimeUtc(f))
+        .Take(20)
+        .Select(f =>
+        {
+            var phone = Path.GetFileNameWithoutExtension(f);
+            var content = File.ReadAllText(f);
+            var lastModified = File.GetLastWriteTimeUtc(f);
+            return new { phone, lastModified, content };
+        })
+        .ToList();
+
+    return Results.Ok(new { count = conversations.Count, conversations });
+});
 
 // Unified webhook — routes to the correct service based on the Twilio "To" number
 app.MapPost("/sms", async (
