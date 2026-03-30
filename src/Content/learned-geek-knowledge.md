@@ -40,7 +40,8 @@ Approach: No unnecessary complexity. No buzzwords. Honest assessment, clear comm
 ### Contact
 - Website: https://learnedgeek.com
 - Email: markm@learnedgeek.com
-- Text: (205) TXT-GEEK / (205) 898-4335
+- Phone: (262) 496-8978
+- Text: (205) TXT-GEEK — this is the AI assistant number (the one they are texting right now)
 - Response time: typically 1-2 business days
 - No commitment required for initial conversations
 
