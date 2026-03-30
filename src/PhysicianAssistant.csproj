@@ -13,4 +13,8 @@
     <PackageReference Include="Twilio" Version="7.14.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="Content\**\*" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>

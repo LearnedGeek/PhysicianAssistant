@@ -37,27 +37,29 @@ public class LearnedGeekService : IMessageService
         _conversationService = conversationService;
         _logger = logger;
 
-        // Load knowledge base from file
-        var knowledgePath = Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "Content", "learned-geek-knowledge.md");
-        if (File.Exists(knowledgePath))
+        // Load knowledge base from file — check multiple paths for local dev and Azure
+        string[] searchPaths =
+        [
+            Path.Combine(AppContext.BaseDirectory, "Content", "learned-geek-knowledge.md"),
+            Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "Content", "learned-geek-knowledge.md"),
+            Path.Combine("Content", "learned-geek-knowledge.md"),
+        ];
+
+        _knowledgeBase = "Learned Geek LLC is a technology consulting company. Contact: markm@learnedgeek.com";
+
+        foreach (var path in searchPaths)
         {
-            _knowledgeBase = File.ReadAllText(knowledgePath);
-            _logger.LogInformation("Loaded Learned Geek knowledge base ({Length} chars)", _knowledgeBase.Length);
+            if (File.Exists(path))
+            {
+                _knowledgeBase = File.ReadAllText(path);
+                _logger.LogInformation("Loaded Learned Geek knowledge base from {Path} ({Length} chars)", path, _knowledgeBase.Length);
+                break;
+            }
         }
-        else
+
+        if (_knowledgeBase.Length < 100)
         {
-            // Fallback: try relative to content root
-            knowledgePath = Path.Combine("Content", "learned-geek-knowledge.md");
-            if (File.Exists(knowledgePath))
-            {
-                _knowledgeBase = File.ReadAllText(knowledgePath);
-                _logger.LogInformation("Loaded Learned Geek knowledge base from content root ({Length} chars)", _knowledgeBase.Length);
-            }
-            else
-            {
-                _knowledgeBase = "Learned Geek LLC is a technology consulting company. Contact: markm@learnedgeek.com";
-                _logger.LogWarning("Knowledge base file not found, using fallback");
-            }
+            _logger.LogWarning("Knowledge base file not found in any search path, using fallback");
         }
     }
 
