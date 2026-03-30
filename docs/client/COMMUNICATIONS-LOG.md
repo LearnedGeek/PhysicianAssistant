@@ -130,3 +130,42 @@ Sent pre-Discovery action items document covering legal, regulatory, operational
 **Full summary:** See docs/client/proposals/2026-03-27/2026-03-27-meeting-summary-EN.md
 
 ---
+
+## 2026-03-29 — Email — Partnership Proposal Sent to Martin
+
+**Channel:** Email
+**From:** Mark
+**To:** Martin
+**Attachments:** Term sheet (EN/ES), Project roadmap (EN/ES)
+
+Mark responded to Martin's March 27 WhatsApp partnership proposal with a formal email containing:
+- 55/45 equity proposal (Mark/Martin)
+- IP retention by Learned Geek with exclusive license to DrOk
+- Carlos as advisor (not partner)
+- $10,000 phased investment from Martin
+- Platform license fee for infrastructure cost recovery
+- Performance milestones (10→25→50 physicians in 12 months)
+- July MVP target reaffirmed
+- "Work is not waiting" — active development continuing
+
+---
+
+## 2026-03-30 — Email — Martin's Response to Proposal
+
+**Channel:** Email (inline reply)
+**From:** Martin
+**To:** Mark
+
+**Key positions:**
+- **IP:** Martin claims ownership — "the idea is the IP." Wants all platform opportunities shared proportionally.
+- **Partnership:** Agreed. Wants full project valuation including both parties' hours.
+- **Carlos:** Agreed as advisor. ✅
+- **Investment:** Conditional on IP resolution. Wants Gantt chart before committing. Has NOT agreed to $10,000.
+- **Revenue:** Reinvest early years, distribute as dividends. No platform license fee.
+- **Equity:** Wants 60% Martin / 40% Mark. 20-point swing from Mark's proposal.
+- **Tone:** Enthusiastic but firm. Felt original proposal positioned him as "just a commercial tool."
+
+**Filed:** docs/client/meetings/2026-03-29/2026-03-29-martin-response-EN.md (with analysis)
+**Filed:** docs/client/meetings/2026-03-29/2026-03-29-martin-response-ES.md (original Spanish)
+
+---
