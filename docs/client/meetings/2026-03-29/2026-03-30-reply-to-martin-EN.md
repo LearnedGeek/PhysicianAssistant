@@ -154,16 +154,15 @@ Let me show you what we're building toward:
 
 ### Mark's Investment vs. Martin's — Build Phase
 
-```
-Mark's Total Investment:     ████████████████████████████████████████████  $110,000+
-Martin's Total Investment:   ██████████████████                            $46,000+
+![Investment Comparison](charts/investment-comparison.svg)
 
-Mark's Hours:                ████████████████████████████████████████████  690 hrs
-Martin's Hours:              ██████████████                                145 hrs
+### Monthly Cash Reality — Who Pays When There's No Revenue?
 
-Mark's Cash Out of Pocket:   ███████                                       $7,500
-Martin's Cash Investment:    ██████████                                     $10,000
-```
+![Monthly Cash Reality](charts/monthly-cash-reality.svg)
+
+### Where We're Headed — Platform Equity Value at 50/50
+
+![Platform Valuation](charts/platform-valuation.svg)
 
 Despite investing 2.4x more total value, I'm proposing 50/50 because I believe in this partnership and I believe in you.
 

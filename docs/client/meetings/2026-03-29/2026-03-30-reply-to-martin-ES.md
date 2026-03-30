@@ -154,16 +154,15 @@ Déjame mostrarte hacia dónde estamos construyendo:
 
 ### Inversión de Mark vs. Martin — Fase de Construcción
 
-```
-Inversión Total de Mark:     ████████████████████████████████████████████  $110,000+
-Inversión Total de Martin:   ██████████████████                            $46,000+
+![Comparación de Inversión](charts/investment-comparison.svg)
 
-Horas de Mark:               ████████████████████████████████████████████  690 hrs
-Horas de Martin:             ██████████████                                145 hrs
+### Realidad de Flujo de Caja Mensual — ¿Quién Paga Cuando No Hay Ingresos?
 
-Dinero de Bolsillo de Mark:  ███████                                       $7,500
-Inversión en Cash de Martin: ██████████                                     $10,000
-```
+![Realidad Mensual](charts/monthly-cash-reality.svg)
+
+### Hacia Dónde Vamos — Valor Patrimonial de la Plataforma al 50/50
+
+![Valoración de Plataforma](charts/platform-valuation.svg)
 
 A pesar de invertir 2.4x más valor total, estoy proponiendo 50/50 porque creo en esta asociación y creo en ti.
 
