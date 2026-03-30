@@ -6,6 +6,7 @@ namespace PhysicianAssistant.Services;
 public class NotificationService
 {
     private readonly ILogger<NotificationService> _logger;
+    private readonly IConfiguration _config;
     private readonly IConversationService _conversationService;
     private readonly string? _twilioSid;
     private readonly string? _twilioToken;
@@ -17,6 +18,7 @@ public class NotificationService
         IConversationService conversationService,
         ILogger<NotificationService> logger)
     {
+        _config = config;
         _conversationService = conversationService;
         _logger = logger;
         _twilioSid = config["Twilio:AccountSid"];
@@ -44,7 +46,8 @@ public class NotificationService
         {
             Twilio.TwilioClient.Init(_twilioSid, _twilioToken);
 
-            var notifyText = $"[TXT-GEEK Lead] New {serviceName} conversation from {fromNumber}: \"{Truncate(message, 100)}\"";
+            var adminUrl = _config["Admin:Url"] ?? "";
+            var notifyText = $"[TXT-GEEK Lead] New {serviceName} conversation from {fromNumber}: \"{Truncate(message, 100)}\" {adminUrl}";
 
             await MessageResource.CreateAsync(
                 to: new PhoneNumber(_notifyNumber),
