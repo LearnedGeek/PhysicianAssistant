@@ -17,6 +17,7 @@ appsettings.*.local.json
 
 ## Data
 conversations/
+contacts/
 
 ## Intern (contains PII — resumes, contact info)
 docs/intern/

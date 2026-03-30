@@ -47,6 +47,7 @@ builder.Services.AddHttpClient<IPubMedService, PubMedService>()
 builder.Services.AddSingleton<IConversationService, FileConversationService>();
 builder.Services.AddSingleton<KnowledgeBaseService>();
 builder.Services.AddHttpClient();
+builder.Services.AddSingleton<IContactService, FileContactService>();
 builder.Services.AddSingleton<NotificationService>();
 builder.Services.AddScoped<ITriageService, TriageService>();
 builder.Services.AddScoped<LearnedGeekService>();

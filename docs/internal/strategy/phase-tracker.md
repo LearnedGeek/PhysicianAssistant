@@ -161,6 +161,7 @@ Already invested before any agreement. This is Mark's in-kind contribution to th
 | 3.2 | Implement citation enforcement + null response path | 12 | 🔴 | |
 | 3.3 | Implement emergency detection (deterministic, not LLM) | 8 | 🔴 | Martin's keyword list required |
 | 3.4 | Build conversation management (multi-physician, multi-patient) | 12 | 🔴 | Migrate from file-based to PostgreSQL |
+| 3.4b | Implement identity persistence (patient/guardian) | 8 | 🔴 | Per ANI findings: dedicated table, not memory. Guardian ≠ patient. Audit log for changes. See ANI-answer-identity-persistence.md |
 | 3.5 | Build VoBo queue + physician notification (SMS alert) | 10 | 🔴 | |
 | 3.6 | Implement consent capture flow | 8 | 🔴 | Per Ley 29733 requirements |
 | 3.7 | Implement data blocking mechanism (ARCO rights) | 6 | 🔴 | |

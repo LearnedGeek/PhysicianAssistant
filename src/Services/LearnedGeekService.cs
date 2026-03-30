@@ -7,6 +7,7 @@ public class LearnedGeekService : IMessageService
     private readonly IClaudeService _claudeService;
     private readonly IConversationService _conversationService;
     private readonly KnowledgeBaseService _knowledgeBaseService;
+    private readonly IContactService _contactService;
     private readonly ILogger<LearnedGeekService> _logger;
 
     private const string SystemPrompt = """
@@ -14,12 +15,12 @@ public class LearnedGeekService : IMessageService
         people learn about Learned Geek LLC, its services, and Mark McArthey's work.
 
         IMPORTANT — FIRST MESSAGE: If this is the first message in the conversation (no
-        previous conversation history), begin your response with:
+        previous conversation history) AND no contact name is known, begin your response with:
         "Hi! I'm the Learned Geek AI assistant."
-        Then answer their question naturally. Also ask for their name so you can
-        personalize the conversation. If they just said hello, introduce yourself,
-        ask their name, and ask how you can help. For follow-up messages, skip the intro.
-        If they give you their name, use it naturally in responses.
+        Then answer their question naturally and ask for their name.
+
+        If a CONTACT NAME is provided in the prompt, use it naturally: "Hey Kevin! What can
+        I help with today?" Do NOT ask for their name again if you already know it.
 
         SMS LENGTH: Keep responses under 450 characters. No emojis. No markdown formatting.
 
@@ -31,20 +32,14 @@ public class LearnedGeekService : IMessageService
         - Projects (API Combat, CrewTrack, Lake Country Spanish, etc.)
         - How to get in touch
 
-        When referencing blog posts, include the full URL so they can read more.
-
         IMPORTANT — NEVER REJECT A REQUEST FOR HELP. Even if the question is outside the
         knowledge base or outside Learned Geek's core services:
         1. Try to help with general advice first. You have broad technical knowledge — use it.
-           A printer issue? Suggest checking WiFi, restarting devices, reinstalling drivers.
-           A WordPress problem? Offer basic troubleshooting steps.
         2. Let them know Mark has been notified: "I've flagged this for Mark and he'll
            follow up with you."
         3. Provide contact info so they can reach Mark directly if they want faster help.
 
         Think of yourself like a helpful receptionist who happens to know a lot about tech.
-        You wouldn't tell someone "that's not my department" — you'd try to help and then
-        make sure the right person follows up.
 
         When referencing blog posts, include the full URL so they can read more.
 
@@ -56,6 +51,17 @@ public class LearnedGeekService : IMessageService
         texting that number. Give them Mark's direct phone and email instead.
         Include contact info in your first response and periodically if the conversation continues.
 
+        NAME DETECTION: If the user provides their name (e.g., "I'm Kevin", "My name is Sarah",
+        "This is Kevin", "Kevin here"), include a line at the very end of your response:
+        ---NAME---
+        Kevin
+        ---END_NAME---
+        The user will NOT see this — it's for the system to save their name.
+
+        If the user corrects their name or says they are someone else (e.g., "Actually it's
+        Kevyn with a Y", "This isn't Kevin, it's Sarah"), include the corrected name in the
+        NAME block. Acknowledge the correction naturally in your response.
+
         Detect the language of the message and respond in the same language.
         Be warm, approachable, and professional — that's the Learned Geek voice.
         """;
@@ -64,11 +70,13 @@ public class LearnedGeekService : IMessageService
         IClaudeService claudeService,
         IConversationService conversationService,
         KnowledgeBaseService knowledgeBaseService,
+        IContactService contactService,
         ILogger<LearnedGeekService> logger)
     {
         _claudeService = claudeService;
         _conversationService = conversationService;
         _knowledgeBaseService = knowledgeBaseService;
+        _contactService = contactService;
         _logger = logger;
     }
 
@@ -85,16 +93,47 @@ public class LearnedGeekService : IMessageService
 
         try
         {
+            // Load or create contact
+            var contact = _contactService.GetContact(phoneNumber);
+            var isNewContact = contact == null;
+            contact ??= new Models.PhoneContact { PhoneNumber = phoneNumber };
+
             _conversationService.AddMessage(phoneNumber, "User", message);
 
-            var prompt = await BuildPromptAsync(phoneNumber, message);
+            var prompt = await BuildPromptAsync(phoneNumber, message, contact);
             var response = await _claudeService.GenerateAsync(prompt, SystemPrompt, cancellationToken);
 
-            _conversationService.AddMessage(phoneNumber, "Assistant", response);
+            // Extract name if Claude detected one
+            var extractedName = ExtractName(response);
+            if (extractedName != null)
+            {
+                var oldName = contact.DisplayName;
+                contact.DisplayName = extractedName;
+                if (oldName != null && oldName != extractedName)
+                {
+                    contact.IdentityNotes.Add(new Models.IdentityNote
+                    {
+                        Note = $"Name changed from '{oldName}' to '{extractedName}'",
+                    });
+                    _logger.LogInformation("Contact {PhoneNumber} name updated: {Old} → {New}", phoneNumber, oldName, extractedName);
+                }
+                else
+                {
+                    _logger.LogInformation("Contact {PhoneNumber} name set: {Name}", phoneNumber, extractedName);
+                }
+            }
 
-            _logger.LogInformation("Learned Geek response for {PhoneNumber}: {Response}", phoneNumber, response);
+            // Save contact (updates LastSeen)
+            _contactService.SaveContact(contact);
 
-            return response;
+            // Strip the name block before sending to user
+            var userResponse = StripNameBlock(response);
+
+            _conversationService.AddMessage(phoneNumber, "Assistant", userResponse);
+
+            _logger.LogInformation("Learned Geek response for {PhoneNumber}: {Response}", phoneNumber, userResponse);
+
+            return userResponse;
         }
         catch (Exception ex)
         {
@@ -103,9 +142,19 @@ public class LearnedGeekService : IMessageService
         }
     }
 
-    private async Task<string> BuildPromptAsync(string phoneNumber, string message)
+    private async Task<string> BuildPromptAsync(string phoneNumber, string message, Models.PhoneContact contact)
     {
         var promptBuilder = new StringBuilder();
+
+        // Inject known identity as a fact (not a memory to be retrieved — per ANI findings)
+        if (!string.IsNullOrEmpty(contact.DisplayName))
+        {
+            promptBuilder.AppendLine($"[CONTACT INFO — this person has texted before]");
+            promptBuilder.AppendLine($"Name: {contact.DisplayName}");
+            promptBuilder.AppendLine($"First seen: {contact.FirstSeen:yyyy-MM-dd}");
+            promptBuilder.AppendLine($"You already know their name — do NOT ask for it again.");
+            promptBuilder.AppendLine();
+        }
 
         // Add knowledge base context (static + dynamic RSS)
         var knowledgeBase = await _knowledgeBaseService.GetKnowledgeBaseAsync();
@@ -127,5 +176,31 @@ public class LearnedGeekService : IMessageService
         promptBuilder.AppendLine("Assistant:");
 
         return promptBuilder.ToString();
+    }
+
+    private static string? ExtractName(string response)
+    {
+        var startMarker = "---NAME---";
+        var endMarker = "---END_NAME---";
+        var startIndex = response.IndexOf(startMarker, StringComparison.Ordinal);
+        if (startIndex < 0) return null;
+
+        var nameStart = startIndex + startMarker.Length;
+        var endIndex = response.IndexOf(endMarker, nameStart, StringComparison.Ordinal);
+        if (endIndex < 0) return null;
+
+        var name = response[nameStart..endIndex].Trim();
+        return string.IsNullOrEmpty(name) ? null : name;
+    }
+
+    private static string StripNameBlock(string response)
+    {
+        var startMarker = "---NAME---";
+        var startIndex = response.IndexOf(startMarker, StringComparison.Ordinal);
+        if (startIndex >= 0)
+        {
+            return response[..startIndex].TrimEnd();
+        }
+        return response;
     }
 }
