@@ -140,9 +140,71 @@ OpenEvidence has been ruled out — requires US NPI, enterprise-only API, US-cen
 #### 4. Data Capture & Storage
 - Structured JSON per conversation
 - Fields: child_name, child_age, parent_name, parent_phone, symptoms[], triage_level, timestamp, physician_id, conversation_transcript, audio_url, pubmed_references[]
-- Ley 29733 compliance — explicit consent, encryption at rest and in transit
+- Ley 29733 compliance — explicit consent, dual-layer encryption (see Encryption Architecture below)
 - Region-configurable hosting (AWS São Paulo available if residency required)
 - Configurable retention policy
+
+#### 4a. Encryption Architecture — Dual-Layer ("Double Encryption")
+
+Medical data requires encryption at two independent layers. This satisfies HIPAA safe harbor provisions (US) and Ley 29733 "appropriate technical measures" requirements (Peru). Both layers are mandatory — one without the other is insufficient.
+
+**Layer 1 — Encryption in Transit (TLS)**
+- All client-server communication over TLS 1.2+ (HTTPS only, no plaintext HTTP)
+- All inter-service communication (backend → database, backend → APIs) over TLS
+- Certificate management via Let's Encrypt or Azure-managed certificates
+- HSTS headers enforced — browsers cannot downgrade to HTTP
+- Twilio webhook endpoints require TLS — this is enforced by Twilio
+- API keys and tokens transmitted only over encrypted channels
+
+**Layer 2 — Encryption at Rest (Storage + Application)**
+
+This layer has two sub-components:
+
+**2a. Storage-Level Encryption (Transparent Data Encryption / TDE)**
+- PostgreSQL: enable TDE or use Azure Database for PostgreSQL which provides AES-256 encryption at rest by default
+- Blob storage (patient images, audio): Azure Blob Storage with SSE (Server-Side Encryption) using AES-256
+- Backup encryption: all database backups and exports encrypted at rest
+- Disk-level encryption on all servers (Azure Disk Encryption / BitLocker)
+- Key management via Azure Key Vault — encryption keys never stored alongside data
+
+**2b. Application-Level Field Encryption (Column/Field Encryption)**
+- Sensitive fields encrypted in the application layer *before* writing to the database
+- Even a DBA with full database access sees ciphertext for protected fields
+- Encrypted fields:
+  - `child_name` — AES-256-GCM
+  - `parent_name` — AES-256-GCM
+  - `parent_phone` — AES-256-GCM
+  - `conversation_transcript` — AES-256-GCM
+  - `symptoms[]` — AES-256-GCM
+  - `audio_url` (if pointing to patient recordings) — AES-256-GCM
+- Non-encrypted fields (needed for querying/sorting):
+  - `triage_level` — needed for priority queue sorting
+  - `timestamp` — needed for chronological ordering
+  - `physician_id` — needed for routing/filtering
+  - `pubmed_references[]` — non-sensitive, public data
+- Encryption key rotation policy: keys rotated every 90 days via Azure Key Vault
+- Key hierarchy: master key → data encryption keys (DEKs) per tenant, envelope encryption pattern
+- Decryption occurs only in the application layer at read time, only for authenticated/authorized users
+
+**Implementation Notes:**
+- Use a dedicated `IEncryptionService` interface for all field-level encryption — abstracts provider and enables testing
+- AES-256-GCM preferred over AES-256-CBC (GCM provides authentication + encryption, prevents tampering)
+- Never log decrypted sensitive fields — logging pipeline must use the encrypted form
+- Search on encrypted fields requires deterministic encryption or a separate search index with hashed/tokenized values
+- Performance consideration: field-level encryption adds ~1-2ms per field per operation — negligible for this use case
+
+**What Each Layer Protects Against:**
+
+| Threat | TLS (Transit) | TDE (Storage) | Field Encryption (App) |
+|---|---|---|---|
+| Network interception / man-in-the-middle | ✅ | — | — |
+| Stolen database backup / disk | — | ✅ | ✅ |
+| Unauthorized DBA access | — | — | ✅ |
+| Cloud provider breach / insider threat | — | Partial | ✅ |
+| Application-level SQL injection | — | — | ✅ (data is ciphertext) |
+| Regulatory compliance (HIPAA / Ley 29733) | Required | Required | Best practice / safe harbor |
+
+**HIPAA Safe Harbor:** If a breach occurs but all compromised data was encrypted per these standards, HIPAA does not require patient notification — the data is considered "unsecured" only if it was unencrypted. This is a significant liability reduction for US market expansion.
 
 #### 5. Physician Dashboard
 - Authentication (per physician login)
@@ -180,7 +242,7 @@ This is non-negotiable and must be built into the system from day one:
 
 - **Ley 29733** — Ley de Protección de Datos Personales (Personal Data Protection Law)
 - Health data is sensitive data under Peruvian law — requires explicit consent
-- Data must be stored securely — encryption at rest and in transit
+- Data must be stored securely — dual-layer encryption required (see Section 4a: Encryption Architecture)
 - Data retention limits apply
 - Cross-border data transfer requires explicit consent and adequate protection guarantees (see Data Residency section below)
 - **Recommendation:** Engage a Peruvian legal advisor to review before launch
@@ -334,6 +396,128 @@ The confirmed architecture uses Twilio as the messaging/channel layer and Claude
 
 ---
 
+### Compute Strategy — Azure Functions vs. App Service
+
+Not all components need always-on compute. The triage system handles bursts (parent messages after hours, dashboard queries) — not constant traffic. A hybrid approach optimizes cost while maintaining response time for medical use cases.
+
+#### Hybrid Model
+
+| Component | Compute | Rationale |
+|---|---|---|
+| Twilio webhook receiver | Azure Functions (Premium, 1 warm instance) | Event-driven, bursty. Premium plan eliminates cold start for first request. Twilio has generous timeout windows but medical context demands fast response. |
+| PubMed RAG queries | Azure Functions (Premium) | Triggered per conversation, not continuous |
+| Notification dispatch (SMS alerts to physicians) | Azure Functions (Consumption) | Infrequent, latency-tolerant — cold start acceptable |
+| Scheduled tasks (backup, key rotation, compliance checks) | Azure Functions (Consumption, timer trigger) | Periodic, no user-facing latency concern |
+| Physician Dashboard (Blazor Server) | App Service | Requires persistent SignalR connection for real-time queue updates. Not suitable for serverless. |
+| Admin portal | App Service (shared with dashboard) | Low traffic, can share the dashboard App Service plan |
+
+#### Cost Comparison (Early Months — 1-10 Physicians)
+
+| Approach | Est. Monthly Cost | Notes |
+|---|---|---|
+| All App Service (B1 tier) | $55-70 | Always-on, paying for idle time nights/mornings |
+| All App Service (S1 tier) | $70-100 | Staging slots, auto-scale |
+| Hybrid (Functions Premium + App Service B1) | $35-55 | Functions scale to zero for unused triggers, 1 warm instance for webhook |
+| All Functions (Consumption) | $10-25 | Cheapest but cold starts on dashboard, no SignalR |
+
+**Recommendation:** Start hybrid — Functions Premium (1 warm instance) for event-driven components, App Service B1 for Blazor dashboard. As physician count grows, scale the Functions plan and move dashboard to S1 for staging slots.
+
+#### Premium Plan — Warm Instances
+
+Azure Functions Premium plan allows pre-warmed instances:
+- `FUNCTIONS_WORKER_PROCESS_COUNT` — number of worker processes per instance
+- `minimumElasticInstanceCount` — minimum warm instances (set to 1 for always-ready)
+- Instances beyond the minimum scale dynamically and scale back to zero
+- Cost: ~$0.173/vCPU/hour for pre-warmed instance (significantly less than dedicated App Service)
+
+---
+
+### Infrastructure as Code — Terraform
+
+All Azure infrastructure must be defined in Terraform from Phase 1. No portal-only resources — if it's not in Terraform, it doesn't exist in production.
+
+#### Why Terraform (Not Portal Clicks)
+
+The Azure portal hides significant configuration when provisioning resources — role assignments, networking rules, default security settings, managed identity bindings. This creates three problems:
+1. **Reproducibility** — can't reliably create dev/staging/production parity
+2. **Auditability** — can't show Martin's legal team exactly what infrastructure exists
+3. **Data residency** — if we need to replicate in São Paulo, manual setup is error-prone and slow
+
+#### Terraform Workflow
+
+```
+1. Define resources in .tf files (version controlled in Git)
+2. terraform plan → preview what will be created/changed
+3. terraform apply → provision infrastructure
+4. State stored in Azure Storage Account (remote backend, encrypted)
+```
+
+#### For Existing Resources (TXT-GEEK POC)
+
+The TXT-GEEK POC was provisioned via portal. To bring under Terraform management:
+
+```bash
+# 1. List what exists in the resource group
+az resource list --resource-group <rg-name> --output table
+
+# 2. Show detailed config for each resource (reveals hidden settings)
+az resource show --ids <resource-id> --output json
+
+# 3. Export ARM template (baseline reference)
+az group export --resource-group <rg-name> --output json > exported.json
+
+# 4. Write Terraform .tf files based on what you discover
+# 5. Import each existing resource into Terraform state
+terraform import azurerm_function_app.txtgeek <resource-id>
+terraform import azurerm_storage_account.txtgeek <resource-id>
+# ... repeat for each resource
+
+# 6. Run terraform plan — diff should show zero changes if .tf matches reality
+terraform plan
+
+# 7. From this point forward, all changes go through Terraform
+```
+
+#### Resource Map — DrOk Production
+
+| Resource | Terraform Resource Type | Phase |
+|---|---|---|
+| Resource Group | `azurerm_resource_group` | 1 |
+| Azure Functions (Premium) | `azurerm_function_app` + `azurerm_app_service_plan` | 1 |
+| App Service (Blazor Dashboard) | `azurerm_app_service` | 1 (provisioned) / 4 (deployed) |
+| PostgreSQL Flexible Server | `azurerm_postgresql_flexible_server` | 3 |
+| Azure Key Vault | `azurerm_key_vault` | 1 |
+| Storage Account (blobs, Function state) | `azurerm_storage_account` | 1 |
+| Application Insights | `azurerm_application_insights` | 1 |
+| Managed Identity | `azurerm_user_assigned_identity` | 1 |
+| Key Vault access policies | `azurerm_key_vault_access_policy` | 1 |
+| DNS Zone + records | `azurerm_dns_zone` | 1 |
+| TLS Certificate | `azurerm_app_service_certificate` or Let's Encrypt | 1 |
+
+#### Environments
+
+| Environment | Purpose | Terraform Workspace |
+|---|---|---|
+| dev | Local development + testing | `dev` |
+| staging | Pre-production, UAT with Martin | `staging` |
+| production | Live physician-facing | `prod` |
+
+Each environment uses the same `.tf` files with environment-specific `.tfvars` for sizing, SKUs, and region. Staging mirrors production config at smaller scale.
+
+#### TXT-GEEK POC — Terraform Learning Exercise
+
+Before building DrOk infrastructure, use the existing TXT-GEEK POC as a practice run:
+1. Export current resource state via Azure CLI
+2. Write Terraform definitions to match
+3. Import into Terraform state
+4. Verify `terraform plan` shows no drift
+5. Practice a change (e.g., add a tag, adjust a setting) through Terraform
+6. Document lessons learned for DrOk Phase 1 provisioning
+
+This validates the workflow on a low-stakes environment before applying it to the production medical platform.
+
+---
+
 ### Recommended Path to Productization
 
 #### Phase 1 — First Client (Martin): Twilio + Claude API + ElevenLabs TTS
@@ -365,6 +549,9 @@ This gives full control, better margins, and true white-label capability.
 | Design physician dashboard against our API only | Dashboard works regardless of channel or LLM provider |
 | Build multi-tenant from the start | Productization requires it — retrofitting is painful |
 | Use Claude API directly for POC/MVP, Bedrock as regional fallback | Configuration change, not architecture change, if residency becomes hard requirement |
+| Hybrid compute — Azure Functions for event-driven, App Service for dashboard | Optimizes cost at low physician counts; scales naturally as usage grows |
+| All infrastructure in Terraform from Phase 1 | Reproducible environments, auditable config, enables regional replication for data residency |
+| Dual-layer encryption (TLS + field-level AES-256-GCM) | HIPAA safe harbor, Ley 29733 compliance, protects against DBA access and cloud provider breach |
 
 ---
 

@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 400" font-family="Arial, sans-serif">
+  <rect width="700" height="400" fill="#1a1a2e" rx="12"/>
+
+  <text x="350" y="40" text-anchor="middle" fill="#e0e0e0" font-size="18" font-weight="bold">Valor de la Plataforma al 50/50 — Ambos Socios Ganan Igual</text>
+  <text x="350" y="60" text-anchor="middle" fill="#808090" font-size="12">SaaS médico valorado a 6-8x Ingresos Recurrentes Anuales</text>
+
+  <!-- Axis -->
+  <line x1="100" y1="320" x2="620" y2="320" stroke="#404060" stroke-width="1"/>
+
+  <!-- Year 1: 50 physicians -->
+  <rect x="120" y="290" width="50" height="30" fill="#2563eb" rx="3"/>
+  <rect x="175" y="290" width="50" height="30" fill="#10b981" rx="3"/>
+  <text x="162" y="345" text-anchor="middle" fill="#a0a0b0" font-size="10">Año 1</text>
+  <text x="162" y="358" text-anchor="middle" fill="#a0a0b0" font-size="9">50 médicos</text>
+  <text x="162" y="284" text-anchor="middle" fill="#e0e0e0" font-size="10">$180K–240K c/u</text>
+
+  <!-- Year 2: 150 physicians -->
+  <rect x="260" y="250" width="50" height="70" fill="#2563eb" rx="3"/>
+  <rect x="315" y="250" width="50" height="70" fill="#10b981" rx="3"/>
+  <text x="302" y="345" text-anchor="middle" fill="#a0a0b0" font-size="10">Año 2</text>
+  <text x="302" y="358" text-anchor="middle" fill="#a0a0b0" font-size="9">150 médicos</text>
+  <text x="302" y="244" text-anchor="middle" fill="#e0e0e0" font-size="10">$540K–720K c/u</text>
+
+  <!-- Year 3: 500 physicians -->
+  <rect x="400" y="180" width="50" height="140" fill="#2563eb" rx="3"/>
+  <rect x="455" y="180" width="50" height="140" fill="#10b981" rx="3"/>
+  <text x="442" y="345" text-anchor="middle" fill="#a0a0b0" font-size="10">Año 3</text>
+  <text x="442" y="358" text-anchor="middle" fill="#a0a0b0" font-size="9">500 médicos</text>
+  <text x="442" y="174" text-anchor="middle" fill="#e0e0e0" font-size="10">$1.8M–2.4M c/u</text>
+
+  <!-- Year 5: 2000 physicians -->
+  <rect x="540" y="90" width="50" height="230" fill="#2563eb" rx="3"/>
+  <rect x="595" y="90" width="50" height="230" fill="#10b981" rx="3"/>
+  <text x="582" y="345" text-anchor="middle" fill="#a0a0b0" font-size="10">Año 5</text>
+  <text x="582" y="358" text-anchor="middle" fill="#a0a0b0" font-size="9">2,000 médicos</text>
+  <text x="582" y="84" text-anchor="middle" fill="#f59e0b" font-size="13" font-weight="bold">$7.2M–9.6M c/u</text>
+
+  <!-- Legend -->
+  <rect x="200" y="380" width="16" height="16" fill="#2563eb" rx="2"/>
+  <text x="222" y="393" fill="#e0e0e0" font-size="12">Valor participación Mark (50%)</text>
+  <rect x="420" y="380" width="16" height="16" fill="#10b981" rx="2"/>
+  <text x="442" y="393" fill="#e0e0e0" font-size="12">Valor participación Martin (50%)</text>
+</svg>

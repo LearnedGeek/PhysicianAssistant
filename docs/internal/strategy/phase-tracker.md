@@ -1,7 +1,7 @@
 # DrOk — Phase Tracker & Cost Estimates
 ## Internal Document — Learned Geek LLC
 
-**Last Updated:** March 29, 2026
+**Last Updated:** March 31, 2026
 **Purpose:** Master tracking document for all phases — costs, hours, tasks, and status. Internal only — the client-facing version is a subset of this.
 
 ---
@@ -168,7 +168,11 @@ Already invested before any agreement. This is Mark's in-kind contribution to th
 | 3.8 | Build audit trail / traceability logging | 8 | 🔴 | Immutable event log |
 | 3.9 | PostgreSQL schema + EF Core migrations | 8 | 🔴 | |
 | 3.10 | Azure PostgreSQL provisioning | 4 | 🔴 | |
-| 3.11 | Testing + security review | 16 | 🔴 | |
+| 3.10b | Encryption Layer 1 — TLS 1.2+ for all transit (HTTPS, inter-service, webhooks) | 2 | 🔴 | HSTS enforced, cert management via Let's Encrypt or Azure |
+| 3.10c | Encryption Layer 2a — Storage-level encryption (TDE + Azure SSE) | 2 | 🔴 | AES-256 at rest on PostgreSQL, blob storage, backups, disks. Keys in Azure Key Vault |
+| 3.10d | Encryption Layer 2b — Application-level field encryption (IEncryptionService) | 8 | 🔴 | AES-256-GCM on child_name, parent_name, parent_phone, transcript, symptoms. Envelope encryption with per-tenant DEKs. 90-day key rotation. See implementation-plan.md §4a |
+| 3.10e | Encryption verification — confirm dual-layer coverage + HIPAA safe harbor compliance | 2 | 🔴 | Verify: no plaintext PII at rest, no unencrypted transit, no sensitive fields in logs |
+| 3.11 | Testing + security review | 16 | 🔴 | Includes encryption layer verification |
 | 3.12 | Intern tasks (documentation, testing, UI components) | 12 | 🔴 | Hannah |
 | | **Subtotal** | **120** | | |
 
@@ -283,16 +287,18 @@ Already invested before any agreement. This is Mark's in-kind contribution to th
 
 See `drok-strategy.md` for full scenarios. Summary at $100/physician:
 
-| Physicians | Monthly Revenue | Mark (55% equity + license) | Martin (45% equity) |
-|---|---|---|---|
-| 10 | $1,000 | $600 | $340 |
-| 25 | $2,500 | $1,500 | $850 |
-| 50 | $5,000 | $3,000 | $1,700 |
-| 100 | $10,000 | $6,000 | $3,400 |
-| 500 | $50,000 | $30,000 | $17,000 |
+| Physicians | Monthly Revenue | Platform Costs | Net Available | Mark (50%) | Martin (50%) |
+|---|---|---|---|---|---|
+| 10 | $1,000 | $500 | $500 | $250 | $250 |
+| 25 | $2,500 | $575 | $1,925 | $963 | $963 |
+| 50 | $5,000 | $650 | $4,350 | $2,175 | $2,175 |
+| 100 | $10,000 | $800 | $9,200 | $4,600 | $4,600 |
+| 500 | $50,000 | $2,500 | $47,500 | $23,750 | $23,750 |
 
-**Break-even for Mark (cash costs only):** ~15 physicians at $100/month
-**Break-even for Martin ($10K investment):** ~25 physicians for ~6 months
+*Note: Equity updated to 50/50 per March 30, 2026 counter-proposal. Platform operating costs deducted before split.*
+
+**Break-even for Mark (cash costs only):** ~8 physicians at $100/month (covers ~$500/mo platform costs)
+**Break-even for Martin ($10K investment):** ~25 physicians for ~4 months
 
 ---
 
@@ -326,4 +332,4 @@ Consolidated from all meetings and documents. Updated as answers arrive.
 ---
 
 *Internal document — not for client distribution.*
-*Updated March 29, 2026.*
+*Updated March 31, 2026.*

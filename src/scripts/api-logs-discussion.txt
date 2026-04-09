@@ -1,0 +1,202 @@
+[0:00:00 - 0:00:27] SPEAKER_05: Good afternoon everyone. I figured out to set up this meeting so we get back together and discuss performance improvements since the memory upgrade, which happened last week. That went successfully in production. So that's where we would like to hear what you're noticing,
+[0:00:28 - 0:00:36] SPEAKER_05: any feedback since the memory upgrade. Then we'll go on to the next couple of items.
+[0:00:42 - 0:00:55] SPEAKER_05: Okay. maybe Brian or Trevor has something for us yeah let's uh start with the metrics of what we
+[0:00:55 - 0:01:10] SPEAKER_03: last have then Trevor I know you were digging into that I saw the emails on um where uh where we were at have we had additional rooms that you've taken a look at
+[0:01:10 - 0:01:32] SPEAKER_02: since then? Yeah, I've been keeping track of all of our runs since that kind of went into place, and from what I've seen, it still kind of seems to be performing kind of how it used to. I think Mark did a little bit of investigation. Our metric models purge pretty,
+[0:01:34 - 0:02:01] SPEAKER_02: they take like the same amount of time every day, but it's kind of our API logs that vary, and that kind of throws off the whole time because it's more dependent on that. But just looking at the overall run times and the standardized run times to purge one million records, it kind of fluctuates from like two minutes to three minutes, anywhere in that range. So it's kind of hard to get a grasp on if it really made a big impact or not.
+[0:02:04 - 0:02:08] SPEAKER_00: So you're monitoring production or stage?
+[0:02:08 - 0:02:11] SPEAKER_02: This is in stage. Okay.
+[0:02:15 - 0:02:20] SPEAKER_05: All right. Have you had a chance, has anyone had a chance to look at production?
+[0:02:28 - 0:02:53] SPEAKER_05: All right. Carla did some query analysis. She provided us with valuable feedback on that. Carla, can you please go over your analysis and what we need to draw our attention to if there's anything we need to for improvements or consider for performance optimization?
+[0:02:55 - 0:02:56] SPEAKER_00: Sure.
+[0:02:57 - 0:02:58] SPEAKER_05: Thank you.
+[0:03:01 - 0:03:06] SPEAKER_00: I'm trying to think. When did I send you that email?
+[0:03:07 - 0:03:17] SPEAKER_01: The last email I got was on Thursday.
+[0:03:17 - 0:03:25] SPEAKER_00: Oh, yeah. Robert and I were looking at the... Can you see my screen?
+[0:03:25 - 0:03:48] SPEAKER_05: Yeah, what Carla is about to share is some information that was hidden, not on purpose, but we looked at it in a different way so we're able to get a better understanding. So this is what Carla is going to share with us.
+[0:03:48 - 0:04:10] SPEAKER_00: Carla Dirlikov Canales Yeah. So this is the execution plan of how currently running the API logs purge. So this is the estimated execution plan. So
+[0:04:10 - 0:04:26] SPEAKER_00: it's doing an index scan on the clustered index. Still don't know, well, or the non-clustered index by ID. So I don't know if this is why somebody potentially wrote this to
+[0:04:28 - 0:04:35] SPEAKER_00: to delete by ID because it seems to do that first. But then it does this index seek
+[0:04:38 - 0:04:54] SPEAKER_00: again there on the non-clustered index which I think has to do with this building this CTE and And then it's doing a nested loop. And I've always been told, anytime you see a nested loop, those are bad.
+[0:04:57 - 0:05:02] SPEAKER_00: Then a table loop. And then doing the clustered index delete.
+[0:05:02 - 0:05:29] SPEAKER_00: So the query or the delete statements that I had suggested to Todd and Brian over time was mainly to just do it by the delete top, just by the log timestamp.
+[0:05:29 - 0:05:50] SPEAKER_00: So if there's a way just to do it date-driven or date and the API name, but keep the ID out of there. So then this is the query plan, the estimated query execution plan.
+[0:05:52 - 0:06:20] SPEAKER_00: This is showing that most of the cost is actually just doing the delete. so that's if you do it just by date so just most of the time is spent doing the delete and no other processing and this one is close but it spends 20% of
+[0:06:20 - 0:06:46] SPEAKER_00: its cost here and 66% of its cost here and these are all within like 1% of each other. I think no matter what, yeah, whichever query plan you're using, the rest of it's the same to clean up the rest of the indexes that are on the table. So I'm assuming it would...
+[0:06:48 - 0:06:54] SPEAKER_00: So is it possible to do the purging just by the date?
+[0:06:54 - 0:06:57] SPEAKER_04: Carla, can you show the first one again, please?
+[0:06:57 - 0:07:02] SPEAKER_00: That's going to be the best.
+[0:07:02 - 0:07:08] SPEAKER_01: Yeah, here it's building a CTE and doing an order by with the API.
+[0:07:11 - 0:07:36] SPEAKER_04: Can you clarify something? So is this just a simple matter of summation, like the ones you showed below, whether it's spending more time on the index or more time on the delete, it seems like they're both around 88%, you know, around that like mid 80% or so. Is that how this works? Or are we talking something entirely different? Because in this
+[0:07:36 - 0:07:51] SPEAKER_04: case it would be what 70, 80, it'd be closer to 90%. So if we add up all the numbers here versus some of the ones below, yeah, you're kind of talking a little bit the same. Is this the apples to oranges thing or what is, can you help clarify this a little bit?
+[0:07:52 - 0:08:17] SPEAKER_00: So this means that you want, in this situation, you want the cost of the query to be mainly the delete. So what this is saying, you've got all this extra cost of executing this query.
+[0:08:17 - 0:08:33] SPEAKER_00: You're doing this index scan here and then this index seek here. Sure. And then you've got these other steps in here. Even though it doesn't say that that costs anything, it's still extra steps in the process.
+[0:08:35 - 0:08:51] SPEAKER_04: But I guess what I'm asking is here the cost of the delete is 38% where the other one's 88%. So are we really doing a comparison here where maybe there's more index effort here, but the cost to delete is less. So is that significant?
+[0:08:55 - 0:09:01] SPEAKER_00: Hey, I don't know, Robert, I'm explaining this badly, I think.
+[0:09:01 - 0:09:25] SPEAKER_05: Okay, yeah, let me explain a little bit there. So what you're seeing in the first query plan there, we are spending, we are loading the entire table into memory. So that is where we are getting the memory hit. That is where the performance is used a lot. So it's 43 million
+[0:09:26 - 0:09:35] SPEAKER_05: records being loaded into memory each time this query is executed. So that is expensive.
+[0:09:36 - 0:09:45] SPEAKER_05: Well, but that's happening for all of them. So it's also happening for, if we use the date.
+[0:09:45 - 0:09:55] SPEAKER_00: Every one of these does that. So this whole index scan on the non-clustered, all of these are doing this.
+[0:09:59 - 0:10:09] SPEAKER_04: And just to be clear, I'm not saying don't do this. Yes, definitely we can make some changes and try it. I'm just trying to understand what the impact is if we're talking one versus the other.
+[0:10:09 - 0:10:35] SPEAKER_03: because it is kind of hitting it by percent so the question is is like well if it's you know 84 percent in the case of delete on the top like what does that translate into like second spent or cycles compared to later on like are are we just spending the effort elsewhere um where's where like what is the apples to apples comparison
+[0:10:35 - 0:11:03] SPEAKER_00: them well each each step that it shows in here is extra processing time so it's just shade i guess what i'm saying is you want to spend most of your time deleting right so here it's saying you're spending 21 percent of your time
+[0:11:03 - 0:11:08] SPEAKER_00: just looking at the index before you do the delete.
+[0:11:09 - 0:11:15] SPEAKER_04: Does this plan include an estimated time to complete, like milliseconds or anything? No. Okay. No.
+[0:11:18 - 0:11:43] SPEAKER_03: Yeah, because I think that's my question. I'm like, well, what is the... If both are 1,000 seconds, then it makes sense that we're getting a lot less deletes if less time is spent deleting but if there a difference in seconds between that then we not really getting the same comparison across And that's my only concern, is if we act on the data,
+[0:11:44 - 0:11:52] SPEAKER_03: is the data, are we interpreting the data the way that it really is, or are we kind of making assumptions?
+[0:11:52 - 0:12:22] SPEAKER_04: for my two cents i think what trevor's been doing is very useful um i did do some scatter plotting of the api logs versus metric models and it definitely is an api logs problem so i think you're hitting it correctly um it's all over the place you know metric models seems to be pretty linear at least you know in terms of the number of rows um so i i think the tracking that we
+[0:12:22 - 0:12:38] SPEAKER_04: should be doing is on API logs, you know, the estimated execution time, you know, at the purge job, because I think that's really going to tell us exactly what it is that we're going to, you know, the performance improvements.
+[0:12:39 - 0:12:47] SPEAKER_04: So if we execute it in the way that you're suggesting, personally, I'd like to see it run for a couple of days and just maybe a week.
+[0:12:52 - 0:12:54] SPEAKER_04: before we commit to saying that it is the solution.
+[0:12:58 - 0:13:12] SPEAKER_02: I guess I have just a simple question here. Why are we, I don't know if this is an obvious question, if I just don't know this, but why are we doing it, like making the query the way we are instead of something simple, like they're suggesting here?
+[0:13:12 - 0:13:24] SPEAKER_04: I think the idea was because we have the index, and maybe, Carla, you can speak to this. Maybe this is sort of where you're going with it, that the index on that API logs table is a little odd, I have to admit.
+[0:13:26 - 0:13:32] SPEAKER_04: I noticed the, I think it was the composite key. I'd have to go look at it again. There was something a little strange about it. Yeah.
+[0:13:33 - 0:13:55] SPEAKER_00: Well, the clustered index is built on the primary key, which has three values. But the unique index is built on the AID, which is a part of.
+[0:13:56 - 0:14:16] SPEAKER_00: So the way data gets stored is pages are stored based on your clustered index, thus the name clustered. So it puts all the stuff with those keys together.
+[0:14:17 - 0:14:46] SPEAKER_00: So it is much more efficient, even though, you know, SSD versus whatever, the old hard disk or hard spinning disk kind of reads or whatever. It's supposed to be the same, but still reading pages into memory, if it's doing it by the clustered index, this is going to be a lot more efficient.
+[0:14:47 - 0:15:10] SPEAKER_00: because everything with this date and then next to the date, then the API name would be the next thing. Those things are going to get stored together. So you're going to read less pages into memory to be able to process them.
+[0:15:11 - 0:15:16] SPEAKER_04: Okay, I think I'm following you. Does that mean then that our...
+[0:15:16 - 0:15:41] SPEAKER_00: Well, here. So also here, the query cost relative to the batch is 44%. Here's the query cost relative to the batch is 56%. And this one says 100%. So I think the query cost...
+[0:15:41 - 0:15:44] SPEAKER_04: Query cost relative to the batch.
+[0:15:44 - 0:15:48] SPEAKER_00: In this scenario. So go on. Sorry, Mark.
+[0:15:48 - 0:16:13] SPEAKER_04: No, I apologize. I was only going to say, does that mean that our idea of deleting by ID solely by ID or trying to collect by ID is ignoring or not efficiently using the full clustered index? So it sounds like we might be able to drop that approach of trying to delete by ID and just use the clustered index. Is that the approach you're suggesting?
+[0:16:14 - 0:16:36] SPEAKER_00: Yes. And specifically, if you just go after the timestamp and pick the lowest timestamp so you avoid. So there are still hot spots. It's like when you're loading data, you're loading data for your highest date.
+[0:16:37 - 0:17:04] SPEAKER_00: So if you want to purge by your lowest date, that is the best scenario to be in. And doing it by ID basically randomly deletes data from all different dates scattered throughout the remaining dates for your time range.
+[0:17:05 - 0:17:09] SPEAKER_04: Sure. Assuming the IDs are not sequential by date. Sure. That makes sense.
+[0:17:09 - 0:17:33] SPEAKER_00: Correct. And the query, yeah, so this query is doing it by ID. And especially when you get behind, when you're doing this date, it's then definitely, when you're doing this lock top 5,000,
+[0:17:33 - 0:17:53] SPEAKER_00: it's returning it's still using this where clause so it's going to return more data than just one day's worth of data if if there is more than one date you know from that date time stamp
+[0:17:53 - 0:18:15] SPEAKER_04: yeah i agree with you there but the goal was in that case carla that we weren't running it for days and days. I think the goal was really to take advantage of that ID index, so that's why the query was written the way it was. But what you're saying makes sense in that we probably don't need that if we can take advantage of the clustered index.
+[0:18:17 - 0:18:22] SPEAKER_00: And you always want to use the clustered index to delete, for sure.
+[0:18:22 - 0:18:49] SPEAKER_03: And I agree with that, although it's still like the queries here haven't really changed but the problem did suddenly appear so while they there might be better ways to write the queries here um and we should definitely pursue that um what it doesn't make sense why we would suddenly be requiring the queries to be rewritten
+[0:18:49 - 0:18:55] SPEAKER_03: in this case that's what i'm i think i'm still confused about well
+[0:18:55 - 0:18:58] SPEAKER_00: Okay.
+[0:18:58 - 0:19:06] SPEAKER_03: Because you've been going after ID for a long time. Not that that's the best half here. Correct. But why suddenly the impact?
+[0:19:07 - 0:19:12] SPEAKER_00: Well, has the number of throws per day changed?
+[0:19:13 - 0:19:31] SPEAKER_03: It has, but we've also changed it in reverse. As in we've stopped retaining it. Well, we've stopped holding it many days. Okay. But we've got more API use generally than we did a few years ago.
+[0:19:31 - 0:20:01] SPEAKER_00: Yeah. So you have to look at total, what were your number of records per day, old world versus new world? And when was, well, okay, the biggest bullet is the index, the text search index. Was that added later?
+[0:20:08 - 0:20:16] SPEAKER_03: Text index search. I'm not sure, I'm not aware that there was a text index search added.
+[0:20:17 - 0:20:26] SPEAKER_05: Carla, we inherited that from the old world, from the old system. Yeah, that old text search has been there a long time.
+[0:20:27 - 0:20:38] SPEAKER_00: Right, yeah, full text search, that's what I was trying to forget the words. But you had the same issue before you migrated, right?
+[0:20:39 - 0:20:53] SPEAKER_03: Well, it was still doing that, yes, but we didn't have any kind of purge issues that we were aware of at least at that time.
+[0:20:53 - 0:20:56] SPEAKER_00: So you're saying the purge issues started after?
+[0:20:56 - 0:21:10] SPEAKER_03: After, but I'm not necessarily sure if it happened immediately after. It might have just done something that ... It happened within the new database structure, but it did not necessarily happen day one.
+[0:21:13 - 0:21:17] SPEAKER_03: It might have, but we don't have anything to kind of prove that.
+[0:21:18 - 0:21:29] SPEAKER_02: Yeah, the only way we would be able to see is if we could look at the historical run times of that purge job. And unfortunately, Autosys does not let us look at any of that history, if it even keeps it itself.
+[0:21:31 - 0:21:40] SPEAKER_00: I know Tom can run queries going back further. but I don't know how far back he can go.
+[0:21:44 - 0:22:03] SPEAKER_00: But I can tell you that a full-text search is what was causing a lot of the blocking and the amount of records that are getting inserted, you know, causes the contention.
+[0:22:05 - 0:22:05] SPEAKER_03: Okay.
+[0:22:08 - 0:22:15] SPEAKER_00: So those are some of the other suggestions that I had regarding it's
+[0:22:15 - 0:22:20] SPEAKER_03: and the full it's highly recommended.
+[0:22:20 - 0:22:24] SPEAKER_00: Yeah, correct. Well it's only happening on the API table.
+[0:22:24 - 0:22:33] SPEAKER_03: Yes, the full text index is only on that table. Is it for API name though?
+[0:22:33 - 0:22:34] SPEAKER_00: No.
+[0:22:34 - 0:22:58] SPEAKER_03: Because we basically are looking for date and app name, right? That's really what we want to do is say grab this app name, delete everything that is of a specific date or prior to a specific date. So that's why I'm wondering like what was the... For the purge job, yes. But when we're searching the records, that's for that full-time search. Oh, because you're using it for the search. The full-time search.
+[0:22:58 - 0:23:15] SPEAKER_00: So basically every time you adding records the full text search kicks in So um yeah So what about
+[0:23:15 - 0:23:43] SPEAKER_03: taking, cause obviously this is the main table here, what about a view doing a view or something that has that, would we be able to get the same kind of aspect there where we could do a full text search on the view but then the table behind the scenes was ultimately kept like this so we could delete more effectively from it without that impact.
+[0:23:44 - 0:23:46] SPEAKER_03: Do you know what I'm saying, Carla? Am I making sense?
+[0:23:48 - 0:23:51] SPEAKER_04: Are you saying to schedule that, Derek? I'm sorry, I just want to make sure I understand.
+[0:23:52 - 0:24:19] SPEAKER_03: Well, I know in other spots that we've ran into similar things, it's been that there's like a view of the table that is built up that is less it contains a complicated view essentially of the database or potentially multiple tables etc that are utilized for querying and that way you can handle all of the more basic inputs against the tables themselves
+[0:24:20 - 0:24:36] SPEAKER_03: like in this case the deletions and stuff without in without being as heavily impacted um by all the rule set up to query that data because the view holds that by pulling all of that data from the actual tables themselves.
+[0:24:41 - 0:24:43] SPEAKER_03: I understand what you're saying now.
+[0:24:43 - 0:24:49] SPEAKER_04: I'm not sure about the efficiency of that, but maybe they would. But what I thought you were asking was...
+[0:24:49 - 0:24:49] SPEAKER_03: That was the main reason.
+[0:24:49 - 0:25:04] SPEAKER_04: Yeah, Carla, you had mentioned about disabling some of the features around the fact that that index has to be recomputed constantly. Can we turn off that rebuild, that automatic rebuild during the scan as well? Just set it to manual?
+[0:25:06 - 0:25:10] SPEAKER_00: Well, I think, well, you'd have to set it to manual overall.
+[0:25:10 - 0:25:12] SPEAKER_04: Oh, overall. We can't just do it temporarily?
+[0:25:12 - 0:25:12] SPEAKER_00: Yeah.
+[0:25:13 - 0:25:13] SPEAKER_04: Okay.
+[0:25:14 - 0:25:32] SPEAKER_00: Yeah. And for highly updated, I mean, updated tables, it recommends definitely not having it set to auto. that it should be manual and then scheduled at specific times to update.
+[0:25:35 - 0:25:37] SPEAKER_04: So ours is automatic right now?
+[0:25:38 - 0:25:39] SPEAKER_00: Yes, it's automatic.
+[0:25:40 - 0:25:46] SPEAKER_04: I mean, I guess we could try and set it to manual and see if that makes a significant difference.
+[0:25:47 - 0:25:50] SPEAKER_00: Yeah, we may have to rebuild it to do that.
+[0:25:52 - 0:25:53] SPEAKER_00: Not sure.
+[0:25:55 - 0:26:09] SPEAKER_00: Robert, you... Right. And I was trying to Google that to see whether, I'm assuming to set it from auto to manual, you'd have to rebuild it, but...
+[0:26:09 - 0:26:26] SPEAKER_05: Yeah, that's another strategy is stop updating the statistics automated, but then we'd have to schedule it in a nightly schedule or at a preferred time.
+[0:26:27 - 0:26:32] SPEAKER_00: So the update statistics are already turned.
+[0:26:33 - 0:26:56] SPEAKER_00: So the statistics on these two tables, I am not rebuilding. We're not doing any rebuilds or reorgs on those two tables anymore on the weekend. and we're only running update statistics on the fields where indexes are built on them. All right.
+[0:26:57 - 0:27:11] SPEAKER_00: So that was done because I think that was also causing, especially on the weekends and into Monday, that was definitely probably causing issues.
+[0:27:11 - 0:27:14] SPEAKER_04: Are the statistics driving the clustered index?
+[0:27:14 - 0:27:33] SPEAKER_00: Yes. Yeah. For an example, on OpenSea, we set up the asynchronous update for statistics.
+[0:27:33 - 0:27:56] SPEAKER_00: So that was one step. We also set all of the index statistics to 100% persistent sample size with no recompute. So therefore, it doesn't attempt to recompute the statistics when you're running queries all day long.
+[0:27:56 - 0:28:23] SPEAKER_00: So we've been running OpenSea with basically on all the core tables with auto update statistics shut off. Because I think that's another thing that also can cause the variability and probably more with your metric models right now.
+[0:28:23 - 0:28:52] SPEAKER_00: That was the other statistics that it said it needed. So those stats man things, processes that get executed. So that's behind the scenes. It's recalculating statistics on all those tables or all those fields on the metrics model table, which is entirely different than the perch for the API logs.
+[0:28:53 - 0:29:19] SPEAKER_05: So, yeah, just forward that email that shows that situation that you are explaining. That is information that was previously hidden from us. So if you want to share that, that's also using lots of system resources. That's that's man.
+[0:29:19 - 0:29:28] SPEAKER_05: So if we stop that Statsman using system resources, that could also be helpful with optimization.
+[0:29:33 - 0:29:38] SPEAKER_04: And you're saying it would be stopped only during a certain window when we're doing this purge?
+[0:29:40 - 0:29:44] SPEAKER_04: The statistics and change tracking, is that the idea? Yeah.
+[0:29:48 - 0:30:13] SPEAKER_00: Well, everything with the statistics has already been done. So I think the point here was,
+[0:30:14 - 0:30:39] SPEAKER_00: all of these running are taking a lot of CPU time overall on the machine, which is then less CPU that's available. But, well, especially when we were running really hot on the CPU. So I don't know, Robert, if you've looked at the CPU now, if it's still at 100%.
+[0:30:39 - 0:31:08] SPEAKER_00: 100%, but these would definitely be contributing to other processes and getting less resources when all of these stats, man, are kicking off. And I think you can see duration, and they're running for a long time.
+[0:31:09 - 0:31:17] SPEAKER_05: Yeah, duration is on the L column over there.
+[0:31:17 - 0:31:29] SPEAKER_00: Yeah, I was, there was a column that said number of all, no, writes, reads. Oh, this is the detail one.
+[0:31:29 - 0:31:31] SPEAKER_05: Then is the summary one.
+[0:31:31 - 0:31:37] SPEAKER_00: I can see. Yeah, the summary one. I suppose how many times it was trying to execute it.
+[0:31:49 - 0:32:17] SPEAKER_00: Yeah, so I'm assuming this one's red. So this one you get the most bang for your buck on the metrics model. So 11 different times during the day, they kick that off for a cumulative effect of that much CPU time and that many reads.
+[0:32:23 - 0:32:27] SPEAKER_00: So that's the request wrote template.
+[0:32:34 - 0:32:44] SPEAKER_04: So I'm just trying to understand. So if the stat man gets kicked off, does that mean that it's running statistics on that specific column because of changes that occurred? Correct.
+[0:32:49 - 0:33:16] SPEAKER_00: Or, while, no, I take that back. It runs, yes, it's partially to do to the number of records that have changed within that table. plus somebody's running a query that probably has a where clause with that request route template in it.
+[0:33:18 - 0:33:43] SPEAKER_00: So SQL Server behind the scenes determines that it needs to update the statistics before it can run that query. So I'm assuming you're also seeing on the metric model database specifically you could get timeouts from queries that are trying to execute because it's saying I need to update the statistics
+[0:33:43 - 0:33:49] SPEAKER_00: before I can give you a query plan to execute this query.
+[0:33:49 - 0:33:55] SPEAKER_04: Yeah, that definitely happens. And I'm assuming that's because they're not up to date because it's not being automatically updated throughout the day?
+[0:33:56 - 0:34:24] SPEAKER_00: Well, it's partially that. It's also set to no recompute. um so like i said it behind the scenes sql server created just statistics on every one of these columns so if you go look and this really tells you that you know this one is getting used a lot
+[0:34:24 - 0:34:48] SPEAKER_00: you know 11 times during throughout the day it said i need to recompute it based on like you said it and SQL Server is really weird about number of records being um how it triggers stuff So and sometimes it doesn
+[0:34:48 - 0:35:07] SPEAKER_00: trigger it when there is a lot of, when there's a large amount of records the percentage that has to change has to be a lot for it to actually even trigger it
+[0:35:07 - 0:35:22] SPEAKER_05: to. Yes there's a rule in the engine there's a threshold if that threshold is crossed maybe that threshold is too high before the statistics get refreshed.
+[0:35:22 - 0:35:51] SPEAKER_00: Oh, and if these things are this request route template, is that sort of a unique value that doesn't have a lot of different values? Or is that different for every record?
+[0:35:51 - 0:36:00] SPEAKER_04: That one shouldn't be, it's not overly unique. I mean, there is some consistency.
+[0:36:01 - 0:36:13] SPEAKER_00: Okay. Because, like, the request is not that time. I'm assuming there's only a handful. There's a couple different hundred values. Right. So it's not hundreds of millions of records. No. It's not unique per record.
+[0:36:13 - 0:36:14] SPEAKER_01: Right.
+[0:36:14 - 0:36:43] SPEAKER_00: So most of these are going to be very small from an index standpoint to build because there's not a lot of values for them. It's not like hundreds of millions or billions of rows. I mean, unique values. So to build these indexes, they're probably going to be small. so
+[0:36:43 - 0:37:02] SPEAKER_00: but the overhead that it's causing here you know and the CPU time and the reads those are significant values from day to day it looks like right that's the other thing that jumped out at us
+[0:37:02 - 0:37:05] SPEAKER_05: lots of CPU lots of reads
+[0:37:05 - 0:37:06] SPEAKER_01: yep
+[0:37:07 - 0:37:37] SPEAKER_03: Which that, I think, is partially explained with the jump, because we know that the CPU cycles or that the CPU itself was lost partially in the transition over to the new database, which we can only sex through a higher cost through licensing is my understanding.
+[0:37:38 - 0:37:38] SPEAKER_03: Right.
+[0:37:39 - 0:38:04] SPEAKER_00: So that's part of the puzzle. Right. So, yeah, you used to have eight CPUs. You're down to four. You used to have, I don't know what the memory was on the old server, but now it's probably back to maybe where it was equivalent. But, yes, you definitely have less CPU. you have half of what you had before.
+[0:38:04 - 0:38:06] SPEAKER_03: Which at the time I thought that was fine.
+[0:38:07 - 0:38:07] SPEAKER_00: Yeah.
+[0:38:08 - 0:38:12] SPEAKER_03: But it wasn't. It obviously wasn't. It was not, right.
+[0:38:13 - 0:38:14] SPEAKER_03: Okay.
+[0:38:15 - 0:38:31] SPEAKER_03: So I know we're getting close, but back to the view stuff quick. Is it possible to switch full text to a separate view query?
+[0:38:32 - 0:38:33] SPEAKER_00: Like a database view.
+[0:38:33 - 0:38:36] SPEAKER_03: So you've got your database view.
+[0:38:37 - 0:38:39] SPEAKER_00: Yeah, I don't think a database view is going to.
+[0:38:40 - 0:39:07] SPEAKER_03: But you can set the permissions different, right, on the view. So the view could have a full text query. So it could have like API logs dash query. That's the view. and then have it searchable with that while the actual table does not. So the view pulls in the table, but then when you're actually running the deletes, it's not basically handling the full text level.
+[0:39:08 - 0:39:14] SPEAKER_03: It's the actual view that is handling that.
+[0:39:15 - 0:39:26] SPEAKER_00: It doesn't matter. I mean, the resource overhead is at the table level itself. The full-text search is built at the table level.
+[0:39:27 - 0:39:36] SPEAKER_03: So even if we built like a view, it would have, the original table would still have to have full-text.
+[0:39:37 - 0:39:42] SPEAKER_04: I think a view is almost a pointer to the table in this sense, I think.
+[0:39:42 - 0:39:43] SPEAKER_01: Okay.
+[0:39:43 - 0:39:53] SPEAKER_04: But what I'm thinking about what you said, Derek, is one thing OMS used to do is they, if you recall, they had like an archive table where they moved rows instead of deleting initially.
+[0:39:55 - 0:40:10] SPEAKER_04: I'm wondering now your line of thinking if we could see something there by having a whole separate table that we would manage. But I guess no matter what, we still have to delete at some point.
+[0:40:11 - 0:40:13] SPEAKER_04: Right. Yeah.
+[0:40:13 - 0:40:18] SPEAKER_00: And the archives purge, I mean. Yeah. It pretty much has the same cost. Yeah, yeah.
+[0:40:19 - 0:40:32] SPEAKER_03: Okay. That's part of what I was looking at here. So do we have a full list of all of the things that we're looking to do, I guess, at this point? Yeah. I know we've talked about a few things here.
+[0:40:36 - 0:41:00] SPEAKER_00: Yeah. I mean, there's the metric. Yeah, if the CPU is the bottleneck, then doing the update stats should maybe help with the overall CPU on the server itself. So that could be a big hit with maybe a little effort.
+[0:41:00 - 0:41:30] SPEAKER_00: So the API logs, like I said, the performance with that, when doing purging, is the overall cost when I've seen blocking happening is on that full text search update. update behind the scenes, which you can't see except for us really digging into what's executing
+[0:41:30 - 0:41:47] SPEAKER_00: and it's hard to see the blocking because it's not a process, it's a behind the scenes process. And the same with those, you know, update stats man, those are also behind the scene, their background processes, you know, handled by SQL Server. So.
+[0:41:47 - 0:42:16] SPEAKER_03: Okay. I think this gives, at least it gives us some things to think about. I think we need to make some, I think making a lot of these changes is probably pertinent. I think the CPU seems to be the main cause. I think there's a couple factors. I think CPU is probably the main one. Biggest one. When it comes, yeah. But it's an opportunity to try to really kind of clean some of this stuff up.
+[0:42:17 - 0:42:22] SPEAKER_03: So I think we would continue down that road and try to make some of these alterations.
+[0:42:24 - 0:42:53] SPEAKER_03: We are about to have some stuff rolled out, so I do want to talk with you, Chris, on the impact on that or with that, if we're going to have less flowing into this table where it might might help out a little bit. But it sounds like that's really the direction that we need to start to take a look at is what can we change to accommodate the CPU issue and what we
+[0:42:53 - 0:42:59] SPEAKER_03: need to change it with the cloud with some of the moves to cloud in the immediate.
+[0:43:03 - 0:43:12] SPEAKER_03: We might be able to fit in the additional CPU stuff into into future wire projects depending.
+[0:43:12 - 0:43:36] SPEAKER_00: Yeah. Yeah. And if you can get the API logs to delete by date or just by date and API, just pull out the whole ID piece, because I think that is truly the biggest bottleneck. I think we tried to
+[0:43:36 - 0:43:52] SPEAKER_04: I'm just trying to remember it's been quite a while but I think we tried to modify the ID index and there was something about how the clustered index was set up and we couldn't drop it I think we'll have to look at that again
+[0:43:52 - 0:43:55] SPEAKER_01: No I understand but if we don't need that ID index
+[0:43:55 - 0:43:58] SPEAKER_04: is that worth dropping? Is there any efficiency improvements there?
+[0:43:59 - 0:44:03] SPEAKER_00: Oh you can't drop it because that's the unique Okay, very good.
+[0:44:04 - 0:44:05] SPEAKER_04: Yeah, understood.
+[0:44:05 - 0:44:32] SPEAKER_00: Well, and that was the other thing. So the search, that full-text search, it said it should be built on the, have the clustered index be on a number field, like ID. so that's where I think probably somebody
+[0:44:32 - 0:44:43] SPEAKER_00: when that was built didn't understand the full text search versus how the clustered index was built and that so
+[0:44:43 - 0:45:01] SPEAKER_03: and I just confirmed the full text search aspect that yeah anything underlining has to have it so there's no way to kind of work around that without literally copying the table or something. Right. Yep.
+[0:45:05 - 0:45:06] SPEAKER_00: Okay.
+[0:45:07 - 0:45:14] SPEAKER_03: Okay. I'll appreciate your help, Carla. We'll have some additional discussions on our side as to what we want to do.
+[0:45:15 - 0:45:31] SPEAKER_05: Yeah, you're welcome. covered. If there's anything else that you need from our end, just let us know and I'll plan another meeting so we can go for things as well. Yeah, set up another meeting. We'll start to try
+[0:45:31 - 0:45:56] SPEAKER_03: to make some of these changes on our side too, just to clean this up in the interim. Okay. Did you set up another meeting? Yeah, just so we can touch base and see where things have progressed and if there's anything else that we can tackle probably a couple of weeks from now. All right.
+[0:45:56 - 0:46:04] SPEAKER_05: I'll be happy to do that so we can get some more guidance. And stay tuned. More to come later.
+[0:46:05 - 0:46:06] SPEAKER_00: Okay. Thanks.
+[0:46:07 - 0:46:07] SPEAKER_05: Okay.
+[0:46:08 - 0:46:08] SPEAKER_03: Thanks, everyone.
+[0:46:09 - 0:46:12] SPEAKER_04: Thanks, everyone. Bye, guys. Bye.
+[0:46:14 - 0:46:16] SPEAKER_04: Thank you.

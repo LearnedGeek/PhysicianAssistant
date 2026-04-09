@@ -1,24 +1,24 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 400" font-family="Arial, sans-serif">
   <rect width="700" height="400" fill="#1a1a2e" rx="12"/>
 
-  <text x="350" y="40" text-anchor="middle" fill="#e0e0e0" font-size="18" font-weight="bold">Investment Comparison — Build Phase</text>
+  <text x="350" y="40" text-anchor="middle" fill="#e0e0e0" font-size="18" font-weight="bold">Comparación de Inversión — Fase de Construcción</text>
 
   <!-- Total Investment Value -->
-  <text x="30" y="85" fill="#a0a0b0" font-size="13">Total Investment Value</text>
+  <text x="30" y="85" fill="#a0a0b0" font-size="13">Valor Total de Inversión</text>
   <rect x="220" y="70" width="420" height="24" fill="#2563eb" rx="4"/>
   <text x="225" y="87" fill="white" font-size="12" font-weight="bold">Mark: $110,000+</text>
   <rect x="220" y="100" width="176" height="24" fill="#10b981" rx="4"/>
-  <text x="225" y="117" fill="white" font-size="12" font-weight="bold">Martin: $40,750+ (plus concept work)</text>
+  <text x="225" y="117" fill="white" font-size="12" font-weight="bold">Martin: $40,750+ (más trabajo conceptual)</text>
 
   <!-- Hours -->
-  <text x="30" y="165" fill="#a0a0b0" font-size="13">Hours Invested</text>
+  <text x="30" y="165" fill="#a0a0b0" font-size="13">Horas Invertidas</text>
   <rect x="220" y="150" width="420" height="24" fill="#2563eb" rx="4"/>
-  <text x="225" y="167" fill="white" font-size="12" font-weight="bold">Mark: 690 hours</text>
+  <text x="225" y="167" fill="white" font-size="12" font-weight="bold">Mark: 690 horas</text>
   <rect x="220" y="180" width="75" height="24" fill="#10b981" rx="4"/>
-  <text x="225" y="197" fill="white" font-size="12" font-weight="bold">Martin: 123 hrs (+ years of concept work)</text>
+  <text x="225" y="197" fill="white" font-size="12" font-weight="bold">Martin: 123 hrs (+ años de trabajo conceptual)</text>
 
   <!-- Cash Out of Pocket -->
-  <text x="30" y="245" fill="#a0a0b0" font-size="13">Cash Out of Pocket</text>
+  <text x="30" y="245" fill="#a0a0b0" font-size="13">Efectivo Desembolsado</text>
   <rect x="220" y="230" width="158" height="24" fill="#2563eb" rx="4"/>
   <text x="225" y="247" fill="white" font-size="12" font-weight="bold">Mark: $7,500</text>
   <rect x="220" y="260" width="210" height="24" fill="#10b981" rx="4"/>
@@ -31,5 +31,5 @@
   <text x="422" y="333" fill="#e0e0e0" font-size="12">Martin (DrOk)</text>
 
   <!-- Bottom note -->
-  <text x="350" y="370" text-anchor="middle" fill="#808090" font-size="11">Different contributions, equal partnership — 50/50 equity.</text>
+  <text x="350" y="370" text-anchor="middle" fill="#808090" font-size="11">Aportes diferentes, asociación igualitaria — participación 50/50.</text>
 </svg>
